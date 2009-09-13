@@ -15,16 +15,16 @@ is_deeply(\%env, {
 }, 'result of GET /');
 
 $req = <<"EOT";
-GET /hoge HTTP/1.1\r
+POST /hoge HTTP/1.1\r
 Content-Type: text/plain\r
 Content-Length: 15\r
 Host: example.com\r
 User-Agent: hoge\r
 \r
 EOT
-is(parse_http_request($req, \%env), length($req), 'GET with headers');
+is(parse_http_request($req, \%env), length($req), 'POST');
 is_deeply(\%env, {
-    REQUEST_METHOD  => "GET",
+    REQUEST_METHOD  => "POST",
     SCRIPT_NAME     => '',
     PATH_INFO       => '/hoge',
     SERVER_PROTOCOL => 'HTTP/1.1',
