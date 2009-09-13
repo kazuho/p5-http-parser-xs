@@ -92,7 +92,7 @@ CODE:
             if (*s == '-') {
               *d = '_';
           } else {
-	    *d = toupper(*s);
+	    *d = tou(*s);
           }
         }
         name = tmp;
