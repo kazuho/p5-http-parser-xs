@@ -26,24 +26,29 @@ int main(void)
   size_t path_len;
   int minor_version;
   struct phr_header headers[4];
+  size_t num_headers;
   
-  tests(15);
+  tests(17);
   
-#define PARSE(s, last_len)					    \
-  phr_parse_request(s, strlen(s), &method, &method_len, &path,	    \
-		    &path_len,	&minor_version, headers,	    \
-		    sizeof(headers) / sizeof(headers[0]), last_len)
+#define PARSE(s, last_len, exp, comment)				\
+  num_headers = sizeof(headers) / sizeof(headers[0]);			\
+  ok(phr_parse_request(s, strlen(s), &method, &method_len, &path,	\
+		       &path_len, &minor_version, headers,		\
+		       &num_headers, last_len)				\
+    == (exp == 0 ? strlen(s) : exp),					\
+    comment)
   
-  ok(PARSE("GET / HTTP/1.0\r\n\r\n", 0) == 0, "simple");
+  PARSE("GET / HTTP/1.0\r\n\r\n", 0, 0, "simple");
+  ok(num_headers == 0, "# of headers");
   ok(strrcmp(method, method_len, "GET"), "method");
   ok(strrcmp(path, path_len, "/"), "path");
   ok(minor_version == 0, "minor version");
   
-  ok(PARSE("GET / HTTP/1.0\r\n\r", 0) == -2, "partial");
+  PARSE("GET / HTTP/1.0\r\n\r", 0, -2, "partial");
   
-  ok(PARSE("GET /hoge HTTP/1.1\r\nHost: example.com\r\nCookie: \r\n\r\n", 0)
-     == 2,
-     "parse headers");
+  PARSE("GET /hoge HTTP/1.1\r\nHost: example.com\r\nCookie: \r\n\r\n", 0, 0,
+	"parse headers");
+  ok(num_headers == 2, "# of headers");
   ok(strrcmp(method, method_len, "GET"), "method");
   ok(strrcmp(path, path_len, "/hoge"), "path");
   ok(minor_version == 1, "minor version");
@@ -53,14 +58,10 @@ int main(void)
   ok(strrcmp(headers[1].name, headers[1].name_len, "Cookie"), "cookie");
   ok(strrcmp(headers[1].value, headers[1].value_len, ""), "cookie value");
   
-  ok(PARSE("GET /hoge HTTP/1.0\r\n\r",
-	   strlen("GET /hoge HTTP/1.0\r\n\r") - 1)
-     == -2,
-     "slowloris (incomplete)");
-  ok(PARSE("GET /hoge HTTP/1.0\r\n\r\n",
-	   strlen("GET /hoge HTTP/1.0\r\n\r\n") - 1)
-     == 0,
-     "slowloris (complete)");
+  PARSE("GET /hoge HTTP/1.0\r\n\r", strlen("GET /hoge HTTP/1.0\r\n\r") - 1,
+	-2, "slowloris (incomplete)");
+  PARSE("GET /hoge HTTP/1.0\r\n\r\n", strlen("GET /hoge HTTP/1.0\r\n\r\n") - 1,
+	0, "slowloris (complete)");
   
 #undef PARSE
   

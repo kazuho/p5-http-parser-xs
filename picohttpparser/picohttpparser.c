@@ -49,13 +49,13 @@ static int is_complete(const char* buf, const char* buf_end, size_t last_len)
   return -2;
 }
 
-int phr_parse_request(const char* buf, size_t len, const char** method,
+int phr_parse_request(const char* _buf, size_t len, const char** method,
 		      size_t* method_len, const char** path, size_t* path_len,
 		      int* minor_version, struct phr_header* headers,
-		      int max_headers, size_t last_len)
+		      size_t* num_headers, size_t last_len)
 {
-  const char* buf_end = buf + len;
-  int hdr_index;
+  const char * buf = _buf, * buf_end = buf + len;
+  size_t max_headers;
   
   /* if last_len != 0, check if the request is complete (a fast countermeasure
      againt slowloris */
@@ -105,7 +105,8 @@ int phr_parse_request(const char* buf, size_t len, const char** method,
   }
 
   /* parse headers */
-  for (hdr_index = 0; ; ++hdr_index) {
+  max_headers = *num_headers;
+  for (*num_headers = 0; ; ++*num_headers) {
     CHECK_EOF();
     if (*buf == '\r') {
       ++buf;
@@ -115,12 +116,12 @@ int phr_parse_request(const char* buf, size_t len, const char** method,
       ++buf;
       break;
     }
-    if (hdr_index == max_headers) {
+    if (*num_headers == max_headers) {
       return -1;
     }
-    if (hdr_index == 0 || ! (*buf == ' ' || *buf == '\t')) {
+    if (*num_headers == 0 || ! (*buf == ' ' || *buf == '\t')) {
       /* parsing name */
-      headers[hdr_index].name = buf;
+      headers[*num_headers].name = buf;
       for (; ; ++buf) {
 	CHECK_EOF();
 	if (*buf == ':') {
@@ -129,11 +130,11 @@ int phr_parse_request(const char* buf, size_t len, const char** method,
 	  return -1;
 	}
       }
-      headers[hdr_index].name_len = buf - headers[hdr_index].name;
+      headers[*num_headers].name_len = buf - headers[*num_headers].name;
       ++buf;
     } else {
-      headers[hdr_index].name = NULL;
-      headers[hdr_index].name_len = 0;
+      headers[*num_headers].name = NULL;
+      headers[*num_headers].name_len = 0;
       ++buf;
     }
     for (; ; ++buf) {
@@ -142,23 +143,23 @@ int phr_parse_request(const char* buf, size_t len, const char** method,
 	break;
       }
     }
-    headers[hdr_index].value = buf;
+    headers[*num_headers].value = buf;
     for (; ; ++buf) {
       CHECK_EOF();
       if (*buf == '\r') {
-	headers[hdr_index].value_len = buf - headers[hdr_index].value;
+	headers[*num_headers].value_len = buf - headers[*num_headers].value;
 	++buf;
 	EXPECT('\n');
 	break;
       } else if (*buf == '\n') {
-	headers[hdr_index].value_len = buf - headers[hdr_index].value;
+	headers[*num_headers].value_len = buf - headers[*num_headers].value;
 	++buf;
 	break;
       }
     }
   }
   
-  return hdr_index;
+  return buf - _buf;
 }
 
 #undef CHECK_EOF
