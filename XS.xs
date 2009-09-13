@@ -5,6 +5,25 @@
 
 #define MAX_HEADERS 128
 
+__inline char tou(char ch)
+{
+  if ('a' <= ch && ch <= 'z')
+    ch -= 'a' - 'A';
+  return ch;
+}
+
+static int header_is(const struct phr_header* header, const char* name,
+		     size_t len)
+{
+  const char* x, * y;
+  if (header->name_len != len)
+    return 0;
+  for (x = header->name, y = name; len != 0; --len, ++x, ++y)
+    if (tou(*x) != *y)
+      return 0;
+  return 1;
+}
+
 MODULE = HTTP::Parser::XS    PACKAGE = HTTP::Parser::XS
 
 SV* parse_http_request(SV* buf, SV* envref)
@@ -47,24 +66,41 @@ CODE:
   last_value = NULL;
   for (i = 0; i < num_headers; ++i) {
     if (headers[i].name != NULL) {
-      const char* s;
-      char* d;
-      size_t n;
-      if (headers[i].name_len > sizeof(tmp) - 5) {
-	hv_clear(env);
-        ret = -1;
-	goto done;
-      }
-      strcpy(tmp, "HTTP_");
-      for (s = headers[i].name, n = headers[i].name_len, d = tmp + 5;
-	   n != 0;
-	   --n) {
-	*d++ = toupper(*s++);
+      const char* name;
+      size_t name_len;
+      if (header_is(headers + i, "CONTENT-TYPE", sizeof("CONTENT-TYPE") - 1)) {
+	name = "CONTENT_TYPE";
+	name_len = sizeof("CONTENT_TYPE") - 1;
+      } else if (header_is(headers + i, "CONTENT-LENGTH",
+			   sizeof("CONTENT-LENGTH") - 1)) {
+	name = "CONTENT_LENGTH";
+	name_len = sizeof("CONTENT_LENGTH") - 1;
+      } else {
+	const char* s;
+	char* d;
+	size_t n;
+        if (sizeof(tmp) - 5 < headers[i].name_len) {
+	  hv_clear(env);
+          ret = -1;
+          goto done;
+        }
+        strcpy(tmp, "HTTP_");
+        for (s = headers[i].name, n = headers[i].name_len, d = tmp + 5;
+	     n != 0;
+	     s++, --n, d++) {
+            if (*s == '-') {
+              *d = '_';
+          } else {
+	    *d = toupper(*s);
+          }
+        }
+        name = tmp;
+        name_len = headers[i].name_len + 5;
       }
       last_value = newSVpv(headers[i].value, headers[i].value_len);
-      hv_store(env, tmp, headers[i].name_len + 5, last_value, 0);
+      hv_store(env, name, name_len, last_value, 0);
     } else {
-      /* contiuing lines of a mulitiline header */
+      /* continuing lines of a mulitiline header */
 	if (headers[i].value_len != 0) {
 	  /* should be optimized, but multiline headers aren't used anyway */
 	  sv_catpvn(last_value, " ", 1);
