@@ -132,16 +132,15 @@ int phr_parse_request(const char* _buf, size_t len, const char** method,
       }
       headers[*num_headers].name_len = buf - headers[*num_headers].name;
       ++buf;
+      for (; ; ++buf) {
+	CHECK_EOF();
+	if (! (*buf == ' ' || *buf == '\t')) {
+	  break;
+	}
+      }
     } else {
       headers[*num_headers].name = NULL;
       headers[*num_headers].name_len = 0;
-      ++buf;
-    }
-    for (; ; ++buf) {
-      CHECK_EOF();
-      if (! (*buf == ' ' || *buf == '\t')) {
-	break;
-      }
     }
     headers[*num_headers].value = buf;
     for (; ; ++buf) {

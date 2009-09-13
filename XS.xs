@@ -68,6 +68,7 @@ CODE:
     if (headers[i].name != NULL) {
       const char* name;
       size_t name_len;
+      SV** slot;
       if (header_is(headers + i, "CONTENT-TYPE", sizeof("CONTENT-TYPE") - 1)) {
 	name = "CONTENT_TYPE";
 	name_len = sizeof("CONTENT_TYPE") - 1;
@@ -97,15 +98,17 @@ CODE:
         name = tmp;
         name_len = headers[i].name_len + 5;
       }
-      last_value = newSVpv(headers[i].value, headers[i].value_len);
-      hv_store(env, name, name_len, last_value, 0);
+      slot = hv_fetch(env, name, name_len, 1);
+      if (SvOK(*slot)) {
+        sv_catpvn(*slot, ", ", 2);
+        sv_catpvn(*slot, headers[i].value, headers[i].value_len);
+      } else {
+        *slot = newSVpvn(headers[i].value, headers[i].value_len);
+      }
+      last_value = *slot;
     } else {
       /* continuing lines of a mulitiline header */
-	if (headers[i].value_len != 0) {
-	  /* should be optimized, but multiline headers aren't used anyway */
-	  sv_catpvn(last_value, " ", 1);
-	  sv_catpvn(last_value, headers[i].value, headers[i].value_len);
-	}
+      sv_catpvn(last_value, headers[i].value, headers[i].value_len);
     }
   }
   

@@ -28,7 +28,7 @@ int main(void)
   struct phr_header headers[4];
   size_t num_headers;
   
-  tests(17);
+  tests(28);
   
 #define PARSE(s, last_len, exp, comment)				\
   num_headers = sizeof(headers) / sizeof(headers[0]);			\
@@ -57,6 +57,20 @@ int main(void)
      "host value");
   ok(strrcmp(headers[1].name, headers[1].name_len, "Cookie"), "cookie");
   ok(strrcmp(headers[1].value, headers[1].value_len, ""), "cookie value");
+  
+  PARSE("GET / HTTP/1.0\r\nfoo: \r\nfoo: b\r\n  \tc\r\n\r\n", 0, 0,
+	"parse multiline");
+  ok(num_headers == 3, "# of headers");
+  ok(strrcmp(method, method_len, "GET"), "method");
+  ok(strrcmp(path, path_len, "/"), "path");
+  ok(minor_version == 0, "minor version");
+  ok(strrcmp(headers[0].name, headers[0].name_len, "foo"), "header #1 name");
+  ok(strrcmp(headers[1].value, headers[1].value_len, ""), "header #1 value");
+  ok(strrcmp(headers[1].name, headers[1].name_len, "foo"), "header #2 name");
+  ok(strrcmp(headers[1].value, headers[1].value_len, "b"), "header #2 value");
+  ok(headers[2].name == NULL, "header #3");
+  ok(strrcmp(headers[2].value, headers[2].value_len, "  \tc"),
+     "header #3 value");
   
   PARSE("GET /hoge HTTP/1.0\r\n\r", strlen("GET /hoge HTTP/1.0\r\n\r") - 1,
 	-2, "slowloris (incomplete)");

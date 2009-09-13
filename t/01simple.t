@@ -1,4 +1,4 @@
-use Test::More tests => 4;
+use Test::More tests => 6;
 
 use HTTP::Parser::XS qw(parse_http_request);
 
@@ -33,3 +33,21 @@ is_deeply(\%env, {
     HTTP_HOST       => 'example.com',
     HTTP_USER_AGENT => 'hoge',
 }, 'result of GET with headers');
+
+$req = <<"EOT";
+GET / HTTP/1.0\r
+Foo: \r
+Foo: \r
+  abc\r
+ de\r
+Foo: fgh\r
+\r
+EOT
+is(parse_http_request($req, \%env), length($req), 'multiline header');
+is_deeply(\%env, {
+    REQUEST_METHOD  => 'GET',
+    SCRIPT_NAME     => '',
+    PATH_INFO       => '/',
+    SERVER_PROTOCOL => 'HTTP/1.0',
+    HTTP_FOO        => ',   abc de, fgh',
+}, 'multiline');
