@@ -24,6 +24,15 @@ static int header_is(const struct phr_header* header, const char* name,
   return 1;
 }
 
+static size_t find_ch(const char* s, size_t len, char ch)
+{
+  size_t i;
+  for (i = 0; i != len; ++i, ++s)
+    if (*s == ch)
+      break;
+  return i;
+}
+
 MODULE = HTTP::Parser::XS    PACKAGE = HTTP::Parser::XS
 
 SV* parse_http_request(SV* buf, SV* envref)
@@ -38,7 +47,7 @@ CODE:
   size_t path_len;
   int minor_version;
   struct phr_header headers[MAX_HEADERS];
-  size_t num_headers;
+  size_t num_headers, question_at;
   int ret, i;
   HV* env;
   SV* last_value;
@@ -57,8 +66,13 @@ CODE:
   hv_store(env, "REQUEST_METHOD", sizeof("REQUEST_METHOD") - 1,
            newSVpvn(method, method_len), 0);
   hv_store(env, "SCRIPT_NAME", sizeof("SCRIPT_NAME") - 1, newSVpvn("", 0), 0);
-  hv_store(env, "PATH_INFO", sizeof("PATH_INFO") - 1, newSVpvn(path, path_len),
-           0);
+  question_at = find_ch(path, path_len, '?');
+  hv_store(env, "PATH_INFO", sizeof("PATH_INFO") - 1,
+	   newSVpvn(path, question_at), 0);
+  if (question_at != path_len)
+    ++question_at;
+  hv_store(env, "QUERY_STRING", sizeof("QUERY_STRING") - 1,
+	   newSVpvn(path + question_at, path_len - question_at), 0);
   sprintf(tmp, "HTTP/1.%d", minor_version);
   hv_store(env, "SERVER_PROTOCOL", sizeof("SERVER_PROTOCOL") - 1,
            newSVpv(tmp, 0), 0);
