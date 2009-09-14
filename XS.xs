@@ -61,6 +61,9 @@ CODE:
     goto done;
   
   env = (HV*)SvRV(envref);
+  if (SvTYPE(env) != SVt_PVHV)
+    Perl_croak(aTHX_ "second param to parse_http_request should be a hashref");
+  
   assert(SvTYPE(env) == SVt_PVHV); /* TODO use die, but how? */
   
   hv_store(env, "REQUEST_METHOD", sizeof("REQUEST_METHOD") - 1,
@@ -101,13 +104,8 @@ CODE:
         strcpy(tmp, "HTTP_");
         for (s = headers[i].name, n = headers[i].name_len, d = tmp + 5;
 	     n != 0;
-	     s++, --n, d++) {
-            if (*s == '-') {
-              *d = '_';
-          } else {
-	    *d = tou(*s);
-          }
-        }
+	     s++, --n, d++)
+          *d = *s == '-' ? '_' : tou(*s);
         name = tmp;
         name_len = headers[i].name_len + 5;
       }
@@ -115,9 +113,8 @@ CODE:
       if (SvOK(*slot)) {
         sv_catpvn(*slot, ", ", 2);
         sv_catpvn(*slot, headers[i].value, headers[i].value_len);
-      } else {
+      } else
         *slot = newSVpvn(headers[i].value, headers[i].value_len);
-      }
       last_value = *slot;
     } else {
       /* continuing lines of a mulitiline header */

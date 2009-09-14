@@ -1,9 +1,16 @@
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 use HTTP::Parser::XS qw(parse_http_request);
 
 my $req;
 my %env;
+
+undef $@;
+eval {
+    parse_http_request("GET / HTTP/1.0\r\n\r\n", '');
+};
+ok($@, '"croak if second param is not a hashref');
+undef $@;
 
 $req = "GET /abc?x=y HTTP/1.0\r\n\r\n";
 %env = ();
