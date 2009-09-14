@@ -54,7 +54,6 @@ CODE:
   env = (HV*)SvRV(envref);
   assert(SvTYPE(env) == SVt_PVHV); /* TODO use die, but how? */
   
-  hv_clear(env);
   hv_store(env, "REQUEST_METHOD", sizeof("REQUEST_METHOD") - 1,
            newSVpvn(method, method_len), 0);
   hv_store(env, "SCRIPT_NAME", sizeof("SCRIPT_NAME") - 1, newSVpvn("", 0), 0);

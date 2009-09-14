@@ -6,6 +6,7 @@ my $req;
 my %env;
 
 $req = "GET / HTTP/1.0\r\n\r\n";
+%env = ();
 is(parse_http_request($req, \%env), length($req), 'GET /');
 is_deeply(\%env, {
     REQUEST_METHOD  => "GET",
@@ -22,6 +23,7 @@ Host: example.com\r
 User-Agent: hoge\r
 \r
 EOT
+%env = ();
 is(parse_http_request($req, \%env), length($req), 'POST');
 is_deeply(\%env, {
     REQUEST_METHOD  => "POST",
@@ -43,6 +45,7 @@ Foo: \r
 Foo: fgh\r
 \r
 EOT
+%env = ();
 is(parse_http_request($req, \%env), length($req), 'multiline header');
 is_deeply(\%env, {
     REQUEST_METHOD  => 'GET',
