@@ -44,4 +44,47 @@ HTTP::Parser::XS - a fast, primitive HTTP request parser
       ...
   }
 
+=head1 DESCRIPTION
+
+HTTP::Parser::XS is a fast, primitive HTTP request parser that can be used either for writing a synchronous HTTP server or a event-driven server.
+
+=head1 METHODS
+
+=over 4
+
+=item parse_http_request($request_string, \%env)
+
+Tries to parse given request string, and if successful, inserts variables into %env.  For the name of the variables inserted, please refer to the PSGI specification.  The return values are:
+
+=over 8
+
+=item >=0
+
+length of the request (request line and the request headers), in bytes
+
+=item -1
+
+given request is corrupt
+
+=item -2
+
+given request is incomplete
+
+=back
+
+=back
+
+=head1 AUTHOR
+
+Kazuho Oku E<lt>kazuhooku@gmail.comE<gt>
+
+=head1 SEE ALSO
+
+L<HTTP::Parser>
+L<HTTP::HeaderParser::XS>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
 =cut
