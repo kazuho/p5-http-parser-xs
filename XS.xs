@@ -33,6 +33,66 @@ static size_t find_ch(const char* s, size_t len, char ch)
   return i;
 }
 
+__inline int hex_decode(const char ch)
+{
+  int r;
+  if ('0' <= ch && ch <= '9')
+    r = ch - '0';
+  else if ('A' <= ch && ch <= 'F')
+    r = ch - 'A' + 0xa;
+  else if ('a' <= ch && ch <= 'f')
+    r = ch - 'a' + 0xa;
+  else
+    r = -1;
+  return r;
+}
+
+static char* url_decode(const char* s, size_t len)
+{
+  char* dbuf, * d;
+  size_t i;
+  
+  for (i = 0; i < len; ++i)
+    if (s[i] == '%')
+      goto NEEDS_DECODE;
+  return (char*)s;
+  
+ NEEDS_DECODE:
+  dbuf = malloc(len - 1);
+  assert(dbuf != NULL);
+  memcpy(dbuf, s, i);
+  d = dbuf + i;
+  while (i < len) {
+    if (s[i] == '%') {
+      int hi, lo;
+      if ((hi = hex_decode(s[i + 1])) == -1
+	  || (lo = hex_decode(s[i + 2])) == -1)
+	return NULL;
+      *d++ = hi * 16 + lo;
+      i += 3;
+    } else
+      *d++ = s[i++];
+  }
+  *d = '\0';
+  return dbuf;
+}
+
+__inline int store_url_decoded(HV* env, const char* name, size_t name_len,
+			       const char* value, size_t value_len)
+{
+  char* decoded = url_decode(value, value_len);
+  if (decoded == NULL)
+    return -1;
+  
+  if (decoded == value)
+    hv_store(env, name, name_len, newSVpvn(value, value_len), 0);
+  else {
+    hv_store(env, name, name_len, newSVpv(decoded, 0), 0);
+    free(decoded);
+  }
+  return 0;
+}
+
 MODULE = HTTP::Parser::XS    PACKAGE = HTTP::Parser::XS
 
 SV* parse_http_request(SV* buf, SV* envref)
@@ -68,8 +128,13 @@ CODE:
            newSVpvn(method, method_len), 0);
   hv_store(env, "SCRIPT_NAME", sizeof("SCRIPT_NAME") - 1, newSVpvn("", 0), 0);
   question_at = find_ch(path, path_len, '?');
-  hv_store(env, "PATH_INFO", sizeof("PATH_INFO") - 1,
-	   newSVpvn(path, question_at), 0);
+  if (store_url_decoded(env, "PATH_INFO", sizeof("PATH_INFO") - 1, path,
+			question_at)
+      != 0) {
+    hv_clear(env);
+    ret = -1;
+    goto done;
+  }
   if (question_at != path_len)
     ++question_at;
   hv_store(env, "QUERY_STRING", sizeof("QUERY_STRING") - 1,

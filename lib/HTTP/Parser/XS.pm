@@ -11,7 +11,7 @@ our %EXPORT_TAGS = (
 our @EXPORT_OK = @{$EXPORT_TAGS{all}};
 our @EXPORT = ();
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 require XSLoader;
 XSLoader::load('HTTP::Parser::XS', $VERSION);

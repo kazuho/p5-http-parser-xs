@@ -1,4 +1,4 @@
-use Test::More tests => 7;
+use Test::More tests => 13;
 
 use HTTP::Parser::XS qw(parse_http_request);
 
@@ -41,8 +41,8 @@ is_deeply(\%env, {
     PATH_INFO       => '/hoge',
     REQUEST_METHOD  => "POST",
     QUERY_STRING    => '',
-    SERVER_PROTOCOL => 'HTTP/1.1',
     SCRIPT_NAME     => '',
+    SERVER_PROTOCOL => 'HTTP/1.1',
 }, 'result of GET with headers');
 
 $req = <<"EOT";
@@ -64,3 +64,33 @@ is_deeply(\%env, {
     SCRIPT_NAME     => '',
     SERVER_PROTOCOL => 'HTTP/1.0',
 }, 'multiline');
+
+$req = <<"EOT";
+GET /a%20b HTTP/1.0\r
+\r
+EOT
+%env = ();
+is(parse_http_request($req, \%env), length($req), 'url-encoded');
+is_deeply(\%env, {
+    PATH_INFO      => '/a b',
+    REQUEST_METHOD => 'GET',
+    QUERY_STRING   => '',
+    SCRIPT_NAME     => '',
+    SERVER_PROTOCOL => 'HTTP/1.0',
+});
+
+$req = <<"EOT";
+GET /a%2zb HTTP/1.0\r
+\r
+EOT
+%env = ();
+is(parse_http_request($req, \%env), -1, 'invalid char in url-encoded path');
+is_deeply(\%env, {});
+
+$req = <<"EOT";
+GET /a%2 HTTP/1.0\r
+\r
+EOT
+%env = ();
+is(parse_http_request($req, \%env), -1, 'partially url-encoded');
+is_deeply(\%env, {});

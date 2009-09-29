@@ -1,4 +1,7 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.02  Tue Sep 29 12:55:00 2009
+	- url-decode PATH_INFO
+
 0.01  Mon Sep 14 11:45:00 2009
 	- initial version
