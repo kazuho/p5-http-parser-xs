@@ -12,13 +12,14 @@ eval {
 ok($@, '"croak if second param is not a hashref');
 undef $@;
 
-$req = "GET /abc?x=y HTTP/1.0\r\n\r\n";
+$req = "GET /abc?x=%79 HTTP/1.0\r\n\r\n";
 %env = ();
 is(parse_http_request($req, \%env), length($req), 'simple get');
 is_deeply(\%env, {
     PATH_INFO       => '/abc',
-    QUERY_STRING    => 'x=y',
+    QUERY_STRING    => 'x=%79',
     REQUEST_METHOD  => "GET",
+    REQUEST_URI     => '/abc?x=%79',
     SCRIPT_NAME     => '',
     SERVER_PROTOCOL => 'HTTP/1.0',
 }, 'result of GET /');
@@ -40,6 +41,7 @@ is_deeply(\%env, {
     HTTP_USER_AGENT => 'hoge',
     PATH_INFO       => '/hoge',
     REQUEST_METHOD  => "POST",
+    REQUEST_URI     => '/hoge',
     QUERY_STRING    => '',
     SCRIPT_NAME     => '',
     SERVER_PROTOCOL => 'HTTP/1.1',
@@ -61,6 +63,7 @@ is_deeply(\%env, {
     PATH_INFO       => '/',
     QUERY_STRING    => '',
     REQUEST_METHOD  => 'GET',
+    REQUEST_URI     => '/',
     SCRIPT_NAME     => '',
     SERVER_PROTOCOL => 'HTTP/1.0',
 }, 'multiline');
@@ -74,6 +77,7 @@ is(parse_http_request($req, \%env), length($req), 'url-encoded');
 is_deeply(\%env, {
     PATH_INFO      => '/a b',
     REQUEST_METHOD => 'GET',
+    REQUEST_URI    => '/a%20b',
     QUERY_STRING   => '',
     SCRIPT_NAME     => '',
     SERVER_PROTOCOL => 'HTTP/1.0',

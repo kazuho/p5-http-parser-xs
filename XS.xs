@@ -126,6 +126,8 @@ CODE:
   
   hv_store(env, "REQUEST_METHOD", sizeof("REQUEST_METHOD") - 1,
            newSVpvn(method, method_len), 0);
+  hv_store(env, "REQUEST_URI", sizeof("REQUEST_URI") - 1,
+	   newSVpvn(path, path_len), 0);
   hv_store(env, "SCRIPT_NAME", sizeof("SCRIPT_NAME") - 1, newSVpvn("", 0), 0);
   question_at = find_ch(path, path_len, '?');
   if (store_url_decoded(env, "PATH_INFO", sizeof("PATH_INFO") - 1, path,
