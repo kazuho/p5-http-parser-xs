@@ -95,7 +95,7 @@ __inline int store_url_decoded(HV* env, const char* name, size_t name_len,
 
 MODULE = HTTP::Parser::XS    PACKAGE = HTTP::Parser::XS
 
-SV* parse_http_request(SV* buf, SV* envref)
+int parse_http_request(SV* buf, SV* envref)
 PROTOTYPE: $$
 CODE:
 {
@@ -175,11 +175,13 @@ CODE:
         name_len = headers[i].name_len + 5;
       }
       slot = hv_fetch(env, name, name_len, 1);
+      if ( !slot )
+        croak("failed to create hash entry");
       if (SvOK(*slot)) {
         sv_catpvn(*slot, ", ", 2);
         sv_catpvn(*slot, headers[i].value, headers[i].value_len);
       } else
-        *slot = newSVpvn(headers[i].value, headers[i].value_len);
+        sv_setpvn(*slot, headers[i].value, headers[i].value_len);
       last_value = *slot;
     } else {
       /* continuing lines of a mulitiline header */
@@ -188,7 +190,7 @@ CODE:
   }
   
  done:
-  RETVAL = newSViv(ret);
+  RETVAL = ret;
 }
 OUTPUT:
   RETVAL

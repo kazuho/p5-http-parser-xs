@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.04  Fri Oct 16 08:15:00 2009
+	- fix memory leak (thanks to nothingmuch for writing the patch)
+
 0.03  Fri Oct 02 06:30:00 2009
 	- add REQUEST_URI to response
 

@@ -11,7 +11,7 @@ our %EXPORT_TAGS = (
 our @EXPORT_OK = @{$EXPORT_TAGS{all}};
 our @EXPORT = ();
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 require XSLoader;
 XSLoader::load('HTTP::Parser::XS', $VERSION);
@@ -77,6 +77,10 @@ given request is incomplete
 =head1 AUTHOR
 
 Kazuho Oku E<lt>kazuhooku@gmail.comE<gt>
+
+=head1 THANKS TO
+
+nothingmuch
 
 =head1 SEE ALSO
 
