@@ -15,4 +15,4 @@
 ^\.git/
 ^\.gitignore
 ^HTTP-Parser-XS-
-XS\.[o|c|bs]$
+XS\.(o|c|bs)$
