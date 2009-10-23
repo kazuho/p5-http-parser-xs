@@ -3,7 +3,7 @@ package HTTP::Parser::XS;
 use strict;
 use warnings;
 
-use Exporter qw(import);
+use base qw(Exporter);
 
 our %EXPORT_TAGS = (
     'all' => [ qw/parse_http_request/ ],
