@@ -74,9 +74,13 @@ given request is incomplete
 
 =back
 
+=head1 COPYRIGHT
+
+Copyright 2009- Kazuho Oku
+
 =head1 AUTHOR
 
-Kazuho Oku E<lt>kazuhooku@gmail.comE<gt>
+Kazuho Oku
 
 =head1 THANKS TO
 

@@ -1,4 +1,5 @@
 use ExtUtils::MakeMaker;
+use Pod::Text;
 
 WriteMakefile(
     NAME          => 'HTTP::Parser::XS',
@@ -10,3 +11,10 @@ WriteMakefile(
     DEFINE        => '',
     INC           => '-I.',
 );
+
+my $p = Pod::Text->new;
+$p->output_fh(do {
+    open my $fh, '>', 'README' or die $!;
+    $fh;
+});
+$p->parse_file('lib/HTTP/Parser/XS.pm');
