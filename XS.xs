@@ -122,6 +122,9 @@ CODE:
   if (ret < 0)
     goto done;
   
+  if (!SvROK(envref))
+    Perl_croak(aTHX_ "second param to parse_http_request should be a hashref");
+
   env = (HV*)SvRV(envref);
   if (SvTYPE(env) != SVt_PVHV)
     Perl_croak(aTHX_ "second param to parse_http_request should be a hashref");
