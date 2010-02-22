@@ -46,7 +46,7 @@ AUTHOR
     Kazuho Oku
 
 THANKS TO
-    nothingmuch
+    nothingmuch charsbar
 
 SEE ALSO
     HTTP::Parser HTTP::HeaderParser::XS
