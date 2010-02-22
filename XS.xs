@@ -58,7 +58,7 @@ static char* url_decode(const char* s, size_t len)
   return (char*)s;
   
  NEEDS_DECODE:
-  Newx(dbuf, len - 1, char);
+  dbuf = malloc(len - 1);
   assert(dbuf != NULL);
   memcpy(dbuf, s, i);
   d = dbuf + i;
@@ -67,7 +67,7 @@ static char* url_decode(const char* s, size_t len)
       int hi, lo;
       if ((hi = hex_decode(s[i + 1])) == -1
 	  || (lo = hex_decode(s[i + 2])) == -1) {
-        Safefree(dbuf);
+        free(dbuf);
     	return NULL;
       }
       *d++ = hi * 16 + lo;
@@ -90,7 +90,7 @@ __inline int store_url_decoded(HV* env, const char* name, size_t name_len,
     hv_store(env, name, name_len, newSVpvn(value, value_len), 0);
   else {
     hv_store(env, name, name_len, newSVpv(decoded, 0), 0);
-    Safefree(decoded);
+    free(decoded);
   }
   return 0;
 }
