@@ -6,7 +6,7 @@
     return -2;		\
   }
 
-#define EXPECT(ch)    \
+#define EXPECT_CHAR(ch)    \
   CHECK_EOF();	      \
   if (*buf++ != ch) { \
     return -1;	      \
@@ -32,7 +32,7 @@ static int is_complete(const char* buf, const char* buf_end, size_t last_len)
     if (*buf == '\r') {
       ++buf;
       CHECK_EOF();
-      EXPECT('\n');
+      EXPECT_CHAR('\n');
       ++ret_cnt;
     } else if (*buf == '\n') {
       ++buf;
@@ -70,7 +70,7 @@ int phr_parse_request(const char* _buf, size_t len, const char** method,
   CHECK_EOF();
   if (*buf == '\r') {
     ++buf;
-    EXPECT('\n');
+    EXPECT_CHAR('\n');
   } else if (*buf == '\n') {
     ++buf;
   }
@@ -84,8 +84,8 @@ int phr_parse_request(const char* _buf, size_t len, const char** method,
   ADVANCE_TOKEN();
   *path_len = buf - *path;
   ++buf;
-  EXPECT('H'); EXPECT('T'); EXPECT('T'); EXPECT('P'); EXPECT('/'); EXPECT('1');
-  EXPECT('.');
+  EXPECT_CHAR('H'); EXPECT_CHAR('T'); EXPECT_CHAR('T'); EXPECT_CHAR('P'); EXPECT_CHAR('/'); EXPECT_CHAR('1');
+  EXPECT_CHAR('.');
   *minor_version = 0;
   for (; ; ++buf) {
     CHECK_EOF();
@@ -97,7 +97,7 @@ int phr_parse_request(const char* _buf, size_t len, const char** method,
   }
   if (*buf == '\r') {
     ++buf;
-    EXPECT('\n');
+    EXPECT_CHAR('\n');
   } else if (*buf == '\n') {
     ++buf;
   } else {
@@ -110,7 +110,7 @@ int phr_parse_request(const char* _buf, size_t len, const char** method,
     CHECK_EOF();
     if (*buf == '\r') {
       ++buf;
-      EXPECT('\n');
+      EXPECT_CHAR('\n');
       break;
     } else if (*buf == '\n') {
       ++buf;
@@ -148,7 +148,7 @@ int phr_parse_request(const char* _buf, size_t len, const char** method,
       if (*buf == '\r') {
 	headers[*num_headers].value_len = buf - headers[*num_headers].value;
 	++buf;
-	EXPECT('\n');
+	EXPECT_CHAR('\n');
 	break;
       } else if (*buf == '\n') {
 	headers[*num_headers].value_len = buf - headers[*num_headers].value;
@@ -162,5 +162,5 @@ int phr_parse_request(const char* _buf, size_t len, const char** method,
 }
 
 #undef CHECK_EOF
-#undef EXPECT
+#undef EXPECT_CHAR
 #undef ADVACE_TOKEN
