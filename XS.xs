@@ -66,8 +66,10 @@ static char* url_decode(const char* s, size_t len)
     if (s[i] == '%') {
       int hi, lo;
       if ((hi = hex_decode(s[i + 1])) == -1
-	  || (lo = hex_decode(s[i + 2])) == -1)
-	return NULL;
+	  || (lo = hex_decode(s[i + 2])) == -1) {
+        free(dbuf);
+    	return NULL;
+      }
       *d++ = hi * 16 + lo;
       i += 3;
     } else
