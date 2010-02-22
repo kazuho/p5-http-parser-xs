@@ -1,5 +1,9 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.06  Tue Feb 23 06:16:00 2010
+	- fix memory leak, add more checks (thanks to charsbar)
+	- prereq Test::More (see rt.cpan.org #54358)
+
 0.05  Fri Oct 23 21:12:00 2009
 	- no more (implicitly) depend on Exporter 5.63 (see http://rt.cpan.org/Public/Bug/Display.html?id=50607, thanks to ANDK for reporting)
 

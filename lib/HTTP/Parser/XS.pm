@@ -11,7 +11,7 @@ our %EXPORT_TAGS = (
 our @EXPORT_OK = @{$EXPORT_TAGS{all}};
 our @EXPORT = ();
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 require XSLoader;
 XSLoader::load('HTTP::Parser::XS', $VERSION);
@@ -85,6 +85,7 @@ Kazuho Oku
 =head1 THANKS TO
 
 nothingmuch
+charsbar
 
 =head1 SEE ALSO
 
