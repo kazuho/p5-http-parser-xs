@@ -4,7 +4,9 @@ use Pod::Text;
 WriteMakefile(
     NAME          => 'HTTP::Parser::XS',
     VERSION_FROM  => 'lib/HTTP/Parser/XS.pm',
-    PREREQ_PM     => {},
+    PREREQ_PM     => {
+	'Test::More' => 0,
+    },
     ABSTRACT_FROM => 'lib/HTTP/Parser/XS.pm',
     AUTHOR        => 'Kazuho Oku',
     LIBS          => [],
