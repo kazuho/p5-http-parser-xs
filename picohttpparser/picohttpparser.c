@@ -163,4 +163,4 @@ int phr_parse_request(const char* _buf, size_t len, const char** method,
 
 #undef CHECK_EOF
 #undef EXPECT_CHAR
-#undef ADVACE_TOKEN
+#undef ADVANCE_TOKEN
