@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.07  Tue Mar 02 15:40:00 2010
+	- fix build error when using older versions of Pod::Text
+
 0.06  Tue Feb 23 06:16:00 2010
 	- fix memory leak, add more checks (thanks to charsbar)
 	- prereq Test::More (see rt.cpan.org #54358)
