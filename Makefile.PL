@@ -1,5 +1,4 @@
 use ExtUtils::MakeMaker;
-use Pod::Text;
 
 WriteMakefile(
     NAME          => 'HTTP::Parser::XS',
@@ -14,9 +13,18 @@ WriteMakefile(
     INC           => '-I.',
 );
 
-my $p = Pod::Text->new;
-$p->output_fh(do {
-    open my $fh, '>', 'README' or die $!;
-    $fh;
-});
-$p->parse_file('lib/HTTP/Parser/XS.pm');
+eval {
+    require Pod::Text;
+    my $p = Pod::Text->new;
+    $p->output_fh(do {
+        open my $fh, '>', "README.$$" or die $!;
+        $fh;
+    });
+    $p->parse_file('lib/HTTP/Parser/XS.pm');
+    undef $p;
+    rename "README.$$", 'README'
+        or die $!;
+};
+
+print "Warning: no README, please install newest Pod::Text and rerun Makefile.PL\n"
+    unless -e 'README';
