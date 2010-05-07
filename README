@@ -1,8 +1,8 @@
 NAME
-    HTTP::Parser::XS - a fast, primitive HTTP request/response parser
+    HTTP::Parser::XS - a fast, primitive HTTP request parser
 
 SYNOPSIS
-      use HTTP::Parser::XS qw(parse_http_request parse_http_response);
+      use HTTP::Parser::XS qw(parse_http_request);
   
       my $ret = parse_http_request(
           "GET / HTTP/1.0\r\nHost: ...\r\n\r\n",
