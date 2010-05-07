@@ -6,7 +6,7 @@ use warnings;
 use base qw(Exporter);
 
 our %EXPORT_TAGS = (
-    'all' => [ qw/parse_http_request/ ],
+    'all' => [ qw/parse_http_request parse_http_response/ ],
 );
 our @EXPORT_OK = @{$EXPORT_TAGS{all}};
 our @EXPORT = ();
@@ -21,11 +21,11 @@ __END__
 
 =head1 NAME
 
-HTTP::Parser::XS - a fast, primitive HTTP request parser
+HTTP::Parser::XS - a fast, primitive HTTP request/response parser
 
 =head1 SYNOPSIS
 
-  use HTTP::Parser::XS qw(parse_http_request);
+  use HTTP::Parser::XS qw(parse_http_request parse_http_response);
   
   my $ret = parse_http_request(
       "GET / HTTP/1.0\r\nHost: ...\r\n\r\n",
