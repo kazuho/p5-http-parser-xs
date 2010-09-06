@@ -96,7 +96,7 @@ STATIC_INLINE
 int store_url_decoded(HV* env, const char* name, size_t name_len,
 			       const char* value, size_t value_len)
 {
-  const char* const decoded = url_decode(value, value_len);
+  char* decoded = url_decode(value, value_len);
   if (decoded == NULL)
     return -1;
   
