@@ -3,16 +3,26 @@
 #include "XSUB.h"
 #include "picohttpparser/picohttpparser.c"
 
+#ifndef STATIC_INLINE /* a public perl API from 5.13.4 */
+#   if defined(__GNUC__) || defined(__cplusplus__) || (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L))
+#       define STATIC_INLINE static inline
+#   else
+#       define STATIC_INLINE static
+#   endif
+#endif /* STATIC_INLINE */
+
 #define MAX_HEADERS 128
 
-__inline char tou(char ch)
+STATIC_INLINE
+char tou(char ch)
 {
   if ('a' <= ch && ch <= 'z')
     ch -= 'a' - 'A';
   return ch;
 }
 
-static int header_is(const struct phr_header* header, const char* name,
+static
+int header_is(const struct phr_header* header, const char* name,
 		     size_t len)
 {
   const char* x, * y;
@@ -24,7 +34,8 @@ static int header_is(const struct phr_header* header, const char* name,
   return 1;
 }
 
-static size_t find_ch(const char* s, size_t len, char ch)
+static
+size_t find_ch(const char* s, size_t len, char ch)
 {
   size_t i;
   for (i = 0; i != len; ++i, ++s)
@@ -33,7 +44,8 @@ static size_t find_ch(const char* s, size_t len, char ch)
   return i;
 }
 
-__inline int hex_decode(const char ch)
+STATIC_INLINE
+int hex_decode(const char ch)
 {
   int r;
   if ('0' <= ch && ch <= '9')
@@ -47,7 +59,8 @@ __inline int hex_decode(const char ch)
   return r;
 }
 
-static char* url_decode(const char* s, size_t len)
+static
+char* url_decode(const char* s, size_t len)
 {
   char* dbuf, * d;
   size_t i;
@@ -79,7 +92,8 @@ static char* url_decode(const char* s, size_t len)
   return dbuf;
 }
 
-__inline int store_url_decoded(HV* env, const char* name, size_t name_len,
+STATIC_INLINE
+int store_url_decoded(HV* env, const char* name, size_t name_len,
 			       const char* value, size_t value_len)
 {
   char* decoded = url_decode(value, value_len);
