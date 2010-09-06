@@ -124,7 +124,8 @@ CODE:
   int minor_version;
   struct phr_header headers[MAX_HEADERS];
   size_t num_headers, question_at;
-  int ret, i;
+  size_t i;
+  int ret;
   HV* env;
   SV* last_value;
   char tmp[1024];
