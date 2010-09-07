@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.08
+	- improve compatibility (mainly Solaris, thanks to gfx)
+
 0.07  Tue Mar 02 15:40:00 2010
 	- fix build error when using older versions of Pod::Text
 
