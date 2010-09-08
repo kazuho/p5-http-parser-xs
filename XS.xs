@@ -63,6 +63,7 @@ int hex_decode(const char ch)
 static
 char* url_decode(const char* s, size_t len)
 {
+  dTHX;
   char* dbuf, * d;
   size_t i;
   
