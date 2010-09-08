@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.09
+	- improve compatibility (mainly Windows, RT #61133, thanks to Taro Nishino)
+
 0.08
 	- improve compatibility (mainly Solaris, thanks to gfx)
 
