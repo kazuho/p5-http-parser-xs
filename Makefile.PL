@@ -1,17 +1,19 @@
-use ExtUtils::MakeMaker;
+use inc::Module::Install;
+use Module::Install::TestTarget;
+use Module::Install::ReadmeMarkdownFromPod;
 
-WriteMakefile(
-    NAME          => 'HTTP::Parser::XS',
-    VERSION_FROM  => 'lib/HTTP/Parser/XS.pm',
-    PREREQ_PM     => {
-	'Test::More' => 0,
-    },
-    ABSTRACT_FROM => 'lib/HTTP/Parser/XS.pm',
-    AUTHOR        => 'Kazuho Oku',
-    LIBS          => [],
-    DEFINE        => '',
-    INC           => '-I.',
+name 'HTTP-Parser-XS';
+all_from('lib/HTTP/Parser/XS.pm');
+author 'Kazuho Oku';
+
+test_requires 'Test::More' => 0.96;
+
+test_target test_pp => (
+    env => { PERL_ONLY => 1 },
+	(alias => 'test')
 );
+
+WriteAll;
 
 eval {
     require Pod::Text;

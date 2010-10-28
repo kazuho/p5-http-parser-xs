@@ -20,8 +20,21 @@ use constant {
 
 our $VERSION = '0.09';
 
-require XSLoader;
-XSLoader::load('HTTP::Parser::XS', $VERSION);
+my $BACKEND;
+
+if (not __PACKAGE__->can('parse_http_response')) {
+    $BACKEND = $ENV{PERL_HTTP_PARSER_XS} || ($ENV{PERL_ONLY} ? 'pp' : '');
+    if ($BACKEND !~ /\b pp \b/xms) {
+        eval {
+            require XSLoader;
+            XSLoader::load(__PACKAGE__, $VERSION);
+        };
+        die $@ if $@ && $BACKEND =~ /\bxs\b/;
+    }
+    if (not __PACKAGE__->can('parse_http_response')) {
+        require HTTP::Parser::XS::PP;
+    }
+}
 
 1;
 __END__
