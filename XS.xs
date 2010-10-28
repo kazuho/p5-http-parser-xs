@@ -18,9 +18,9 @@
 
 #define MAX_HEADERS 128
 
-#define FORMAT_NONE     0
-#define FORMAT_HASHREF  1
-#define FORMAT_ARRAYREF 2
+#define HEADER_NONE         0
+#define HEADERS_AS_HASHREF  1
+#define HEADERS_AS_ARRAYREF 2
 
 STATIC_INLINE
 char tou(char ch)
@@ -272,11 +272,11 @@ PPCODE:
   size_t i;
   SV *res_headers;
 
-  if (header_format == FORMAT_HASHREF) {
+  if (header_format == HEADERS_AS_HASHREF) {
     res_headers = sv_2mortal((SV*)newHV());
-  } else if (header_format == FORMAT_ARRAYREF) {
+  } else if (header_format == HEADERS_AS_ARRAYREF) {
     res_headers = sv_2mortal((SV*)newAV());
-  } else if (header_format == FORMAT_NONE) {
+  } else if (header_format == HEADER_NONE) {
     res_headers = NULL;
   }
 
@@ -299,7 +299,7 @@ PPCODE:
           }
       }
 
-      if (header_format == FORMAT_HASHREF) {
+      if (header_format == HEADERS_AS_HASHREF) {
         HE* const slot = hv_fetch_ent((HV*)res_headers, namesv, FALSE, 0U);
         if(!slot) { /* first time */
             (void)hv_store_ent((HV*)res_headers, namesv,
@@ -318,7 +318,7 @@ PPCODE:
             av_push((AV*)SvRV(sv), SvREFCNT_inc_simple_NN(valuesv));
         }
         last_element_value_sv = valuesv;
-      } else if (header_format == FORMAT_ARRAYREF) {
+      } else if (header_format == HEADERS_AS_ARRAYREF) {
             av_push((AV*)res_headers, SvREFCNT_inc_simple_NN(namesv));
             av_push((AV*)res_headers, SvREFCNT_inc_simple_NN(valuesv));
             last_element_value_sv = valuesv;
@@ -328,7 +328,7 @@ PPCODE:
       if (special_headers && last_special_headers_value_sv) {
         concat_multiline_header(aTHX_ last_special_headers_value_sv, headers[i].value, headers[i].value_len);
       }
-      if ((header_format == FORMAT_HASHREF || header_format == FORMAT_ARRAYREF) && last_element_value_sv) {
+      if ((header_format == HEADERS_AS_HASHREF || header_format == HEADERS_AS_ARRAYREF) && last_element_value_sv) {
         concat_multiline_header(aTHX_ last_element_value_sv, headers[i].value, headers[i].value_len);
       }
     }

@@ -125,7 +125,7 @@ done_testing;
 
 sub parse_it {
     my ($buf) = @_;
-    my ($ret, $minor_version, $status, $msg, $headers) = parse_http_response($buf, FORMAT_HASHREF);
+    my ($ret, $minor_version, $status, $msg, $headers) = parse_http_response($buf, HEADERS_AS_HASHREF);
     if ($ret > 0) {
         return +{
             _rc => $status,
