@@ -53,10 +53,6 @@ SV* my_new_name(pTHX_ const char* const pv, STRLEN const len) {
 
 STATIC_INLINE
 void concat_multiline_header(pTHX_ SV * val, const char * const cont, size_t const cont_len) {
-    if (!val) {
-        return;
-    }
-
     sv_catpvs(val, "\n"); /* XXX: is it collect? */
     sv_catpvn(val, cont, cont_len);
 }
@@ -329,10 +325,10 @@ PPCODE:
       }
     } else {
       /* continuing lines of a mulitiline header */
-      if (special_headers) {
+      if (special_headers && last_special_headers_value_sv) {
         concat_multiline_header(aTHX_ last_special_headers_value_sv, headers[i].value, headers[i].value_len);
       }
-      if (header_format == FORMAT_HASHREF || header_format == FORMAT_ARRAYREF) {
+      if ((header_format == FORMAT_HASHREF || header_format == FORMAT_ARRAYREF) && last_element_value_sv) {
         concat_multiline_header(aTHX_ last_element_value_sv, headers[i].value, headers[i].value_len);
       }
     }
