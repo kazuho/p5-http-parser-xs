@@ -2,6 +2,10 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#define NEED_newRV_noinc
+#define NEED_newSVpvn_flags
+#define NEED_sv_2pv_flags
+#include "ppport.h"
 #include "picohttpparser/picohttpparser.c"
 
 #ifndef STATIC_INLINE /* a public perl API from 5.13.4 */
@@ -14,12 +18,47 @@
 
 #define MAX_HEADERS 128
 
+#define FORMAT_NONE     0
+#define FORMAT_HASHREF  1
+#define FORMAT_ARRAYREF 2
+
 STATIC_INLINE
 char tou(char ch)
 {
   if ('a' <= ch && ch <= 'z')
     ch -= 'a' - 'A';
   return ch;
+}
+
+STATIC_INLINE char tol(char const ch)
+{
+  return ('A' <= ch && ch <= 'Z')
+    ? ch - ('A' - 'a')
+    : ch;
+}
+
+STATIC_INLINE
+SV* my_new_name(pTHX_ const char* const pv, STRLEN const len) {
+    SV* const sv  = sv_2mortal(newSV(len));
+    char* const d = SvPVX_mutable(sv);
+    STRLEN i;
+    for(i = 0; i < len; i++) {
+        d[i] = pv[i] == '_' ? '-' : tol(pv[i]);
+    }
+    SvPOK_on(sv);
+    SvCUR_set(sv, len);
+    *SvEND(sv) = '\0';
+    return sv;
+}
+
+STATIC_INLINE
+void concat_multiline_header(pTHX_ SV * val, const char * const cont, size_t const cont_len) {
+    if (!val) {
+        return;
+    }
+
+    sv_catpvs(val, "\n"); /* XXX: is it collect? */
+    sv_catpvn(val, cont, cont_len);
 }
 
 static
@@ -217,3 +256,103 @@ CODE:
 }
 OUTPUT:
   RETVAL
+
+void
+parse_http_response(SV* buf, int header_format, HV* special_headers = NULL)
+PPCODE:
+{
+  int minor_version, status;
+  const char* msg;
+  size_t msg_len;
+  struct phr_header headers[MAX_HEADERS];
+  size_t num_headers = MAX_HEADERS;
+  STRLEN buf_len;
+  const char* const buf_str = SvPV_const(buf, buf_len);
+  size_t last_len = 0;
+  int const ret             = phr_parse_response(buf_str, buf_len,
+    &minor_version, &status, &msg, &msg_len, headers, &num_headers, last_len);
+  SV* last_special_headers_value_sv = NULL;
+  SV* last_element_value_sv         = NULL;
+  size_t i;
+  SV *res_headers;
+
+  if (header_format == FORMAT_HASHREF) {
+    res_headers = sv_2mortal((SV*)newHV());
+  } else if (header_format == FORMAT_ARRAYREF) {
+    res_headers = sv_2mortal((SV*)newAV());
+  } else if (header_format == FORMAT_NONE) {
+    res_headers = NULL;
+  }
+
+  for (i = 0; i < num_headers; i++) {
+    if (headers[i].name != NULL) {
+      SV* const namesv = my_new_name(aTHX_
+        headers[i].name, headers[i].name_len);
+      SV* const valuesv = newSVpvn_flags(
+        headers[i].value, headers[i].value_len, SVs_TEMP);
+
+      if(special_headers) {
+          HE* const slot = hv_fetch_ent(special_headers, namesv, FALSE, 0U);
+          if (slot) {
+            SV* const hash_value = hv_iterval(special_headers, slot);
+            SvSetMagicSV_nosteal(hash_value, valuesv);
+            last_special_headers_value_sv = hash_value;
+          }
+          else {
+            last_special_headers_value_sv = NULL;
+          }
+      }
+
+      if (header_format == FORMAT_HASHREF) {
+        HE* const slot = hv_fetch_ent((HV*)res_headers, namesv, FALSE, 0U);
+        if(!slot) { /* first time */
+            (void)hv_store_ent((HV*)res_headers, namesv,
+                SvREFCNT_inc_simple_NN(valuesv), 0U);
+        }
+        else { /* second time; the header has multiple values */
+            SV* sv = hv_iterval((HV*)res_headers, slot);
+            if(!( SvROK(sv) && SvTYPE(SvRV(sv)) == SVt_PVAV )) {
+                /* make $value to [$value] and restore it to $res_header */
+                AV* const av    = newAV();
+                SV* const avref = newRV_noinc((SV*)av);
+                (void)av_store(av, 0, SvREFCNT_inc_simple_NN(sv));
+                (void)hv_store_ent((HV*)res_headers, namesv, avref, 0U);
+                sv = avref;
+            }
+            av_push((AV*)SvRV(sv), SvREFCNT_inc_simple_NN(valuesv));
+        }
+        last_element_value_sv = valuesv;
+      } else if (header_format == FORMAT_ARRAYREF) {
+            av_push((AV*)res_headers, SvREFCNT_inc_simple_NN(namesv));
+            av_push((AV*)res_headers, SvREFCNT_inc_simple_NN(valuesv));
+            last_element_value_sv = valuesv;
+      }
+    } else {
+      /* continuing lines of a mulitiline header */
+      if (special_headers) {
+        concat_multiline_header(aTHX_ last_special_headers_value_sv, headers[i].value, headers[i].value_len);
+      }
+      if (header_format == FORMAT_HASHREF || header_format == FORMAT_ARRAYREF) {
+        concat_multiline_header(aTHX_ last_element_value_sv, headers[i].value, headers[i].value_len);
+      }
+    }
+  }
+  
+  if(ret > 0) {
+    EXTEND(SP, 4);
+    mPUSHi(ret);
+    mPUSHi(minor_version);
+    mPUSHi(status);
+    mPUSHp(msg, msg_len);
+    if (res_headers) {
+      mPUSHs(newRV_inc(res_headers));
+    } else {
+      mPUSHs(&PL_sv_undef);
+    }
+  }
+  else {
+    EXTEND(SP, 1);
+    mPUSHi(ret);
+  }
+}
+

@@ -6,10 +6,17 @@ use warnings;
 use base qw(Exporter);
 
 our %EXPORT_TAGS = (
-    'all' => [ qw/parse_http_request/ ],
+    'all' => [ qw/parse_http_request parse_http_response FORMAT_NONE FORMAT_HASHREF FORMAT_ARRAYREF/ ],
 );
 our @EXPORT_OK = @{$EXPORT_TAGS{all}};
 our @EXPORT = ();
+
+# header format
+use constant {
+    FORMAT_NONE => 0,       # don't parse headers. It's fastest. if you want only special headers, also fastest.
+    FORMAT_HASHREF => 1,    # HTTP::Headers compatible HashRef, { header_name => "header_value" or ["val1", "val2"] }
+    FORMAT_ARRAYREF =>2,    # Ordered ArrayRef : [ name, value, name2, value2 ... ]
+};
 
 our $VERSION = '0.09';
 
