@@ -5,15 +5,34 @@ use utf8;
 use Benchmark ':all';
 use HTTP::Parser::XS ':all';
 
-my $buf = join( '',
-    "HTTP/1.0 200 OK\015\012",
-    "Content-Length: 1234\015\012",
-    "Connection: close\015\012",
-    "Location: http://mixi.jp/\015\012",
-    "Transfer-Encoding: chunked\015\012",
-    "Content-Encoding: gzip\015\012",
-    "X-Foo: Bar\015\012",
-    "\015\012" );
+my $buf = <<'...';
+HTTP/1.0 200 OK
+Date: Fri, 29 Oct 2010 05:19:06 GMT
+Server: hi
+Status: 200 OK
+X-Transaction: 1414179016-1573-34157
+ETag: "0694329108904124516f45127c9543d9"-gzip
+Last-Modified: Fri, 29 Oct 2010 05:19:06 GMT
+X-Runtime: 0.01082
+Content-Type: text/html; charset=utf-8
+Pragma: no-cache
+X-Revision: DEV
+Expires: Tue, 31 Mar 1981 05:00:00 GMT
+Cache-Control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0
+Set-Cookie: auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT
+Set-Cookie: _twitter_sess=BJKL5252d3Hjkmode=block
+X-Frame-Options: SAMEORIGIN
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Content-Length: 20
+Connection: close
+
+...
+$buf =~ s/\015?\012/\015\012/;
+
+# $buf is valid?
+my ($ret, $minor_version, $status, $msg) = parse_http_response($buf, HEADER_NONE);
+$ret > 0 or die;
 
 cmpthese(
     -1, {
