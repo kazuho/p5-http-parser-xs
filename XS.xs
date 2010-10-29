@@ -283,31 +283,22 @@ PPCODE:
 
   for (i = 0; i < num_headers; i++) {
     if (headers[i].name != NULL) {
-      SV* namesv;
-      SV* valuesv;
+      SV* const namesv = normalize_header_name(aTHX_
+        headers[i].name, headers[i].name_len);
+      SV* const valuesv = newSVpvn_flags(
+        headers[i].value, headers[i].value_len, SVs_TEMP);
 
       if(special_headers) {
-          SV** const slot = hv_fetch(special_headers,
-            headers[i].name, headers[i].name_len, FALSE);
-
+          HE* const slot = hv_fetch_ent(special_headers, namesv, FALSE, 0U);
           if (slot) {
-            SV* const hash_value = *slot;
-            sv_setpvn_mg(hash_value, headers[i].value, headers[i].value_len);
+            SV* const hash_value = hv_iterval(special_headers, slot);
+            SvSetMagicSV_nosteal(hash_value, valuesv);
             last_special_headers_value_sv = hash_value;
           }
           else {
             last_special_headers_value_sv = NULL;
           }
       }
-
-      if(header_format == HEADER_NONE) {
-          continue;
-      }
-
-      namesv = normalize_header_name(aTHX_
-        headers[i].name, headers[i].name_len);
-      valuesv = newSVpvn_flags(
-        headers[i].value, headers[i].value_len, SVs_TEMP);
 
       if (header_format == HEADERS_AS_HASHREF) {
         HE* const slot = hv_fetch_ent((HV*)res_headers, namesv, FALSE, 0U);
