@@ -4,6 +4,8 @@ use warnings;
 use utf8;
 use Benchmark ':all';
 use HTTP::Parser::XS ':all';
+use LWP::UserAgent;
+
 
 my $buf = <<'...';
 HTTP/1.0 200 OK
@@ -30,9 +32,16 @@ Connection: close
 ...
 $buf =~ s/\015?\012/\015\012/;
 
+if (my $url = shift @ARGV) {
+    my $ua = LWP::UserAgent->new(parse_head => 0);
+    my $res = $ua->head($url);
+    die $res->status_line unless $res->is_success;
+    $buf = $res->as_string;
+}
+
 # $buf is valid?
 my ($ret, $minor_version, $status, $msg) = parse_http_response($buf, HEADER_NONE);
-$ret > 0 or die;
+$ret > 0 or die "*** Cannot parse header ***\n$buf";
 
 cmpthese(
     -1, {
