@@ -347,7 +347,7 @@ PPCODE:
   }
   
   if(ret > 0) {
-    EXTEND(SP, 4);
+    EXTEND(SP, 5);
     mPUSHi(ret);
     mPUSHi(minor_version);
     mPUSHi(status);
