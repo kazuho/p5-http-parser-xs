@@ -43,7 +43,7 @@ SV* normalize_header_name(pTHX_ const char* const pv, STRLEN const len) {
     char* const d = SvPVX_mutable(sv);
     STRLEN i;
     for(i = 0; i < len; i++) {
-        d[i] = pv[i] == '_' ? '-' : tol(pv[i]);
+        d[i] = tol(pv[i]);
     }
     SvPOK_on(sv);
     SvCUR_set(sv, len);
