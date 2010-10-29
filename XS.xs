@@ -276,6 +276,7 @@ PPCODE:
     res_headers = sv_2mortal((SV*)newHV());
   } else if (header_format == HEADERS_AS_ARRAYREF) {
     res_headers = sv_2mortal((SV*)newAV());
+    av_extend((AV*)res_headers, (num_headers * 2) - 1);
   } else if (header_format == HEADER_NONE) {
     res_headers = NULL;
   }
