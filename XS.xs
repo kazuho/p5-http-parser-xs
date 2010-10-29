@@ -38,7 +38,7 @@ STATIC_INLINE char tol(char const ch)
 }
 
 STATIC_INLINE
-SV* my_new_name(pTHX_ const char* const pv, STRLEN const len) {
+SV* normalize_header_name(pTHX_ const char* const pv, STRLEN const len) {
     SV* const sv  = sv_2mortal(newSV(len));
     char* const d = SvPVX_mutable(sv);
     STRLEN i;
@@ -282,7 +282,7 @@ PPCODE:
 
   for (i = 0; i < num_headers; i++) {
     if (headers[i].name != NULL) {
-      SV* const namesv = my_new_name(aTHX_
+      SV* const namesv = normalize_header_name(aTHX_
         headers[i].name, headers[i].name_len);
       SV* const valuesv = newSVpvn_flags(
         headers[i].value, headers[i].value_len, SVs_TEMP);
