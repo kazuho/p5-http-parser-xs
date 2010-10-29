@@ -69,7 +69,7 @@ HTTP::Parser::XS - a fast, primitive HTTP request parser
   # for HTTP clients
   use HTTP::Parser::XS qw(parse_http_response HEADERS_AS_ARRAYREF);
   my %special_headers = (
-    'last-modified' => '',
+    'content-length' => undef,
   );
   my($ret, $status, $message, $headers)
     = parse_http_response($response, HEADERS_AS_ARRAYREF, \%special_headers);
@@ -83,10 +83,12 @@ HTTP::Parser::XS - a fast, primitive HTTP request parser
   else {
     # $ret is the length of the headers, starting the content body
 
-    # $status might be 200
-    # $message might be "OK"
-    # $headers might be [ 'content-type' => 'text/hml', ... ]
-    # $special_headers{'last-modified'} might be filled
+    # the other values are the response messages. For example:
+    # $status  = 200
+    # $message = "OK"
+    # $headers = [ 'content-type' => 'text/html', ... ]
+
+    # and $special_headers{'content-length'} will be filled in
   }
 
 
@@ -133,9 +135,13 @@ C<HEADERS_AS_ARRAYREF>, C<HEADERS_AS_HASHREF>, or C<HEADER_NONE>,
 which are exportable constants.
 
 The optional I<%special_headers> is for headers you specifically require.
-e.g. if you want the C<Last-Modified> field, set its name with
-default values as C<< %h = ('last-modified' => '') >> and pass as
-I<%special_headers>, which value will be filled in C<parse_http_response()>.
+You can set any HTTP response header names, which must be lower-cased,
+and their default values, and then the values are filled in by
+C<parse_http_response()>.
+For example, if you want the C<Cointent-Length> field, set its name with
+default values like C<< %h = ('content-length' => undef) >> and pass it as
+I<%special_headers>. After parsing, C<$h{'content-length'}> is set
+if the response has the C<Content-Length> field, otherwise it's not touched.
 
 The return values are:
 
