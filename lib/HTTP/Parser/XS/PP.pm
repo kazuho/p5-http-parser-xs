@@ -140,13 +140,13 @@ sub _parse_as_none {
                 $value .= "\n$_";
                 next;
             }
-            $f = lc($field); $f =~ tr/_/-/;
+            $f = lc($field); 
             exists $special->{$f} and $special->{$f} = $value;
         }
         ( $field, $value ) = split /[ \t]*: ?/, $_, 2;
     }
     if ( defined $field ) {
-        $f = lc($field); $f =~ tr/_/-/;
+        $f = lc($field); 
         exists $special->{$f} and $special->{$f} = $value;
     }
 }
@@ -163,14 +163,14 @@ sub _parse_as_arrayref {
                 $value .= "\n$_";
                 next;
             }
-            $f = lc($field); $f =~ tr/_/-/;
+            $f = lc($field); 
             push @headers, $f, $value;
             exists $special->{$f} and $special->{$f} = $value;
         }
         ( $field, $value ) = split /[ \t]*: ?/, $_, 2;
     }
     if ( defined $field ) {
-        $f = lc($field); $f =~ tr/_/-/;
+        $f = lc($field); 
         push @headers, $f, $value; 
         exists $special->{$f} and $special->{$f} = $value;
     }
@@ -189,7 +189,7 @@ sub _parse_as_hashref {
                 $value .= "\n$_";
                 next;
             }
-            $f = lc($field); $f =~ tr/_/-/;
+            $f = lc($field); 
             if ( defined $self{$f} ) {
                 my $h = $self{$f};
                 ref($h) eq 'ARRAY'
@@ -201,7 +201,7 @@ sub _parse_as_hashref {
         ( $field, $value ) = split /[ \t]*: ?/, $_, 2;
     }
     if ( defined $field ) {
-        $f = lc($field); $f =~ tr/_/-/;
+        $f = lc($field); 
         if ( defined $self{$f} ) {
             my $h = $self{$f};
             ref($h) eq 'ARRAY'
