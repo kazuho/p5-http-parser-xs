@@ -38,17 +38,16 @@ STATIC_INLINE char tol(char const ch)
 }
 
 STATIC_INLINE
-SV* normalize_header_name(pTHX_ const char* const pv, STRLEN const len) {
-    SV* const sv  = sv_2mortal(newSV(len));
-    char* const d = SvPVX_mutable(sv);
+const char* normalize_header_name(pTHX_
+        char* const buf, size_t const buflen,
+        const char* const pv, STRLEN const len) {
+    STRLEN const maxlen = (len >= buflen ? (buflen - 1) : len);
     STRLEN i;
-    for(i = 0; i < len; i++) {
-        d[i] = tol(pv[i]);
+    for(i = 0; i < maxlen; i++) {
+        buf[i] = tol(pv[i]);
     }
-    SvPOK_on(sv);
-    SvCUR_set(sv, len);
-    *SvEND(sv) = '\0';
-    return sv;
+    buf[maxlen] = '\0';
+    return buf;
 }
 
 STATIC_INLINE
@@ -271,6 +270,7 @@ PPCODE:
   SV* last_element_value_sv         = NULL;
   size_t i;
   SV *res_headers;
+  char tmp[1024];
 
   if (header_format == HEADERS_AS_HASHREF) {
     res_headers = sv_2mortal((SV*)newHV());
@@ -282,16 +282,19 @@ PPCODE:
   }
 
   for (i = 0; i < num_headers; i++) {
-    if (headers[i].name != NULL) {
-      SV* const namesv = normalize_header_name(aTHX_
-        headers[i].name, headers[i].name_len);
+    struct phr_header const h = headers[i];
+    if (h.name != NULL) {
+      const char* const name = normalize_header_name(aTHX_
+        tmp, sizeof(tmp), h.name, h.name_len);
+      SV* namesv;
       SV* valuesv;
 
       if(special_headers) {
-          HE* const slot = hv_fetch_ent(special_headers, namesv, FALSE, 0U);
+          SV** const slot = hv_fetch(special_headers,
+            name, h.name_len, FALSE);
           if (slot) {
-            SV* const hash_value = hv_iterval(special_headers, slot);
-            sv_setpvn_mg(hash_value, headers[i].value, headers[i].value_len);
+            SV* const hash_value = *slot;
+            sv_setpvn_mg(hash_value, h.value, h.value_len);
             last_special_headers_value_sv = hash_value;
           }
           else {
@@ -303,8 +306,9 @@ PPCODE:
           continue;
       }
 
+      namesv  = sv_2mortal(newSVpvn_share(name, h.name_len, 0U));
       valuesv = newSVpvn_flags(
-        headers[i].value, headers[i].value_len, SVs_TEMP);
+        h.value, h.value_len, SVs_TEMP);
 
       if (header_format == HEADERS_AS_HASHREF) {
         HE* const slot = hv_fetch_ent((HV*)res_headers, namesv, FALSE, 0U);
@@ -333,10 +337,10 @@ PPCODE:
     } else {
       /* continuing lines of a mulitiline header */
       if (special_headers && last_special_headers_value_sv) {
-        concat_multiline_header(aTHX_ last_special_headers_value_sv, headers[i].value, headers[i].value_len);
+        concat_multiline_header(aTHX_ last_special_headers_value_sv, h.value, h.value_len);
       }
       if ((header_format == HEADERS_AS_HASHREF || header_format == HEADERS_AS_ARRAYREF) && last_element_value_sv) {
-        concat_multiline_header(aTHX_ last_element_value_sv, headers[i].value, headers[i].value_len);
+        concat_multiline_header(aTHX_ last_element_value_sv, h.value, h.value_len);
       }
     }
   }
