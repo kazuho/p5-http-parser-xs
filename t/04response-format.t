@@ -61,7 +61,7 @@ Content-Type: text/html
 ----------
 HTTP/1.1 200 OK
 Content-Type: text/html
-FOO_BAR: BAZ
+FOO-BAR: BAZ
 
 ----------
 { ret => [54,"1","200","OK"], HEADER_AS_NONE => undef, HEADER_AS_HASH => {"content-type" => "text/html","foo-bar" => "BAZ"}, HEADER_AS_ARRAY => ["content-type","text/html","foo-bar","BAZ"] }

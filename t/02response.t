@@ -96,7 +96,7 @@ Content-Type: text/html
 ----------
 HTTP/1.1 200 OK
 Content-Type: text/html
-FOO_BAR: BAZ
+FOO-BAR: BAZ
 
 ----------
 {
