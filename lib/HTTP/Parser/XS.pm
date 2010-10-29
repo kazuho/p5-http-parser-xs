@@ -46,7 +46,8 @@ HTTP::Parser::XS - a fast, primitive HTTP request parser
 =head1 SYNOPSIS
 
   use HTTP::Parser::XS qw(parse_http_request);
-  
+
+  # for HTTP servers
   my $ret = parse_http_request(
       "GET / HTTP/1.0\r\nHost: ...\r\n\r\n",
       \%env,
@@ -64,11 +65,44 @@ HTTP::Parser::XS - a fast, primitive HTTP request parser
       ...
   }
 
+
+  # for HTTP clients
+  use HTTP::Parser::XS qw(parse_http_response HEADERS_AS_ARRAYREF);
+  my %special_headers = (
+    'last-modified' => '',
+  );
+  my($ret, $status, $message, $headers)
+    = parse_http_response($response, HEADERS_AS_ARRAYREF, \%special_headers);
+
+  if($ret == -1) }
+    # response is incomplete
+  }
+  elsif($ret == -2) {
+    # response is broken
+  }
+  else {
+    # $ret is the length of the headers, starting the content body
+
+    # $status might be 200
+    # $message might be "OK"
+    # $headers might be [ 'content-type' => 'text/hml', ... ]
+    # $special_headers{'last-modified'} might be filled
+  }
+
+
 =head1 DESCRIPTION
 
-HTTP::Parser::XS is a fast, primitive HTTP request parser that can be used either for writing a synchronous HTTP server or a event-driven server.
+HTTP::Parser::XS is a fast, primitive HTTP request/response parser.
 
-=head1 METHODS
+The request parser can be used either for writing a synchronous HTTP server or a event-driven server.
+
+The response parser can be used for writing HTTP clients.
+
+Note that even if this distribution name ends C<::XS>, B<pure Perl>
+implementation is supported, so you can use this module on compiler-less
+environments.
+
+=head1 FUNCTIONS
 
 =over 4
 
@@ -92,6 +126,53 @@ given request is incomplete
 
 =back
 
+=item parse_http_response($response_string, $header_format, \%special_headers)
+
+Tries to parse given response string. I<$header_format> must be
+C<HEADERS_AS_ARRAYREF>, C<HEADERS_AS_HASHREF>, or C<HEADER_NONE>,
+which are exportable constants.
+
+The optional I<%special_headers> is for headers you specifically require.
+e.g. if you want the C<Last-Modified> field, set its name with
+default values as C<< %h = ('last-modified' => '') >> and pass as
+I<%special_headers>, which value will be filled in C<parse_http_response()>.
+
+The return values are:
+
+=over 8
+
+=item C<$ret>
+
+The parsering status, which is the same as C<parse_http_response()>. i.e.
+the length of the response headers in bytes, C<-1> for incomplete headers,
+or C<-2> for errors.
+
+If the given response string is broken or imcomplete, C<parse_http_response()>
+returns only this value.
+
+=item C<$minor_version>
+
+The minor version of the given response.
+i.e. C<1> for HTTP/1.1, C<0> for HTTP/1.0.
+
+=item C<$status>
+
+The HTTP status of the given response. e.g. C<200> for success.
+
+=item C<$message>
+
+The HTTP status message. e.g. C<OK> for success.
+
+=item C<$headers>
+
+The HTTP headers for the given response. It is an ARRAY reference
+if I<$header_format> is C<HEADERS_AS_ARRAYREF>, a HASH reference on
+C<HEADERS_AS_HASHREF>, an C<undef> on C<HEADER_NONE>.
+
+The names of the headers are normalized to lower-cased.
+
+=back
+
 =back
 
 =head1 COPYRIGHT
@@ -108,6 +189,8 @@ nothingmuch
 charsbar
 
 =head1 SEE ALSO
+
+L<http://github.com/kazuho/picohttpparser>
 
 L<HTTP::Parser>
 L<HTTP::HeaderParser::XS>
