@@ -16,6 +16,7 @@
 #   endif
 #endif /* STATIC_INLINE */
 
+#define MAX_NAME_LEN 1024
 #define MAX_HEADERS 128
 
 #define HEADER_NONE         0
@@ -165,7 +166,7 @@ CODE:
   int ret;
   HV* env;
   SV* last_value;
-  char tmp[1024];
+  char tmp[MAX_NAME_LEN];
   
   buf_str = SvPV(buf, buf_len);
   num_headers = MAX_HEADERS;
@@ -270,7 +271,7 @@ PPCODE:
   SV* last_element_value_sv         = NULL;
   size_t i;
   SV *res_headers;
-  char tmp[1024];
+  char tmp[MAX_NAME_LEN];
 
   if (header_format == HEADERS_AS_HASHREF) {
     res_headers = sv_2mortal((SV*)newHV());
