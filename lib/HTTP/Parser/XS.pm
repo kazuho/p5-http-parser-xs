@@ -6,14 +6,15 @@ use warnings;
 use base qw(Exporter);
 
 our %EXPORT_TAGS = (
-    'all' => [ qw/parse_http_request parse_http_response HEADER_NONE HEADERS_AS_HASHREF HEADERS_AS_ARRAYREF/ ],
+    'all' => [ qw/parse_http_request parse_http_response
+                  HEADERS_NONE HEADERS_AS_HASHREF HEADERS_AS_ARRAYREF/ ],
 );
 our @EXPORT_OK = @{$EXPORT_TAGS{all}};
 our @EXPORT = ();
 
-# header format
+# header format for parse_http_response()
 use constant {
-    HEADER_NONE => 0,       # don't parse headers. It's fastest. if you want only special headers, also fastest.
+    HEADERS_NONE => 0,       # don't parse headers. It's fastest. if you want only special headers, also fastest.
     HEADERS_AS_HASHREF => 1,    # HTTP::Headers compatible HashRef, { header_name => "header_value" or ["val1", "val2"] }
     HEADERS_AS_ARRAYREF =>2,    # Ordered ArrayRef : [ name, value, name2, value2 ... ]
 };
@@ -133,7 +134,7 @@ given request is incomplete
 =item parse_http_response($response_string, $header_format, \%special_headers)
 
 Tries to parse given response string. I<$header_format> must be
-C<HEADERS_AS_ARRAYREF>, C<HEADERS_AS_HASHREF>, or C<HEADER_NONE>,
+C<HEADERS_AS_ARRAYREF>, C<HEADERS_AS_HASHREF>, or C<HEADERS_NONE>,
 which are exportable constants.
 
 The optional I<%special_headers> is for headers you specifically require.
@@ -175,7 +176,7 @@ The HTTP status message. e.g. C<OK> for success.
 
 The HTTP headers for the given response. It is an ARRAY reference
 if I<$header_format> is C<HEADERS_AS_ARRAYREF>, a HASH reference on
-C<HEADERS_AS_HASHREF>, an C<undef> on C<HEADER_NONE>.
+C<HEADERS_AS_HASHREF>, an C<undef> on C<HEADERS_NONE>.
 
 The names of the headers are normalized to lower-cased.
 

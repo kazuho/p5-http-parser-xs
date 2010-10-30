@@ -19,7 +19,7 @@
 #define MAX_HEADER_NAME_LEN 1024
 #define MAX_HEADERS         128
 
-#define HEADER_NONE         0
+#define HEADERS_NONE        0
 #define HEADERS_AS_HASHREF  1
 #define HEADERS_AS_ARRAYREF 2
 
@@ -277,7 +277,7 @@ PPCODE:
   } else if (header_format == HEADERS_AS_ARRAYREF) {
     res_headers = sv_2mortal((SV*)newAV());
     av_extend((AV*)res_headers, (num_headers * 2) - 1);
-  } else if (header_format == HEADER_NONE) {
+  } else if (header_format == HEADERS_NONE) {
     res_headers = NULL;
   }
 
@@ -307,7 +307,7 @@ PPCODE:
           }
       }
 
-      if(header_format == HEADER_NONE) {
+      if(header_format == HEADERS_NONE) {
           continue;
       }
 

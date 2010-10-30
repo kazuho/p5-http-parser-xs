@@ -97,7 +97,7 @@ sub _parse_header {
 # ----------------------------------------------------------
 
 my %PARSER_FUNC = (
-    HTTP::Parser::XS::HEADER_NONE()         => \&_parse_as_none,
+    HTTP::Parser::XS::HEADERS_NONE()        => \&_parse_as_none,
     HTTP::Parser::XS::HEADERS_AS_HASHREF()  => \&_parse_as_hashref,
     HTTP::Parser::XS::HEADERS_AS_ARRAYREF() => \&_parse_as_arrayref,
 );

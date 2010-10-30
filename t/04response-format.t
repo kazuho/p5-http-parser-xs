@@ -5,9 +5,9 @@ use Data::Dumper;
 use HTTP::Parser::XS qw/:all/;
 
 my %formats = (
-    HTTP::Parser::XS::HEADER_NONE()      => "NONE",
-    HTTP::Parser::XS::HEADERS_AS_HASHREF()   => "HASH",
-    HTTP::Parser::XS::HEADERS_AS_ARRAYREF()  => "ARRAY",
+    HEADERS_NONE()         => "NONE",
+    HEADERS_AS_HASHREF()   => "HASH",
+    HEADERS_AS_ARRAYREF()  => "ARRAY",
 );
 
 my $tests = <<'__HEADERS';
