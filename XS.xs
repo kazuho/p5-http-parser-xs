@@ -38,17 +38,16 @@ STATIC_INLINE char tol(char const ch)
     : ch;
 }
 
+/* copy src to dest with normalization.
+   dest must have enough size for src */
 STATIC_INLINE
-const char* normalize_header_name(pTHX_
-        char* const buf, size_t const buflen,
-        const char* const pv, STRLEN const len) {
-    STRLEN const maxlen = (len >= buflen ? (buflen - 1) : len);
+void normalize_response_header_name(pTHX_
+        char* const dest,
+        const char* const src, STRLEN const len) {
     STRLEN i;
-    for(i = 0; i < maxlen; i++) {
-        buf[i] = tol(pv[i]);
+    for(i = 0; i < len; i++) {
+        dest[i] = tol(src[i]);
     }
-    buf[maxlen] = '\0';
-    return buf;
 }
 
 STATIC_INLINE
@@ -271,7 +270,7 @@ PPCODE:
   SV* last_element_value_sv         = NULL;
   size_t i;
   SV *res_headers;
-  char tmp[MAX_HEADER_NAME_LEN];
+  char name[MAX_HEADER_NAME_LEN]; /* temp buffer for normalized names */
 
   if (header_format == HEADERS_AS_HASHREF) {
     res_headers = sv_2mortal((SV*)newHV());
@@ -285,10 +284,15 @@ PPCODE:
   for (i = 0; i < num_headers; i++) {
     struct phr_header const h = headers[i];
     if (h.name != NULL) {
-      const char* const name = normalize_header_name(aTHX_
-        tmp, sizeof(tmp), h.name, h.name_len);
       SV* namesv;
       SV* valuesv;
+      if(h.name_len > sizeof(name)) {
+          /* skip if name_len is too long */
+          continue;
+      }
+
+      normalize_response_header_name(aTHX_
+        name, h.name, h.name_len);
 
       if(special_headers) {
           SV** const slot = hv_fetch(special_headers,
