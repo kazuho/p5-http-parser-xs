@@ -19,7 +19,7 @@ use constant {
     HEADERS_AS_ARRAYREF =>2,    # Ordered ArrayRef : [ name, value, name2, value2 ... ]
 };
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 our $BACKEND;
 
@@ -210,6 +210,9 @@ Copyright 2009- Kazuho Oku
 =head1 AUTHOR
 
 Kazuho Oku
+gfx
+mala
+tokuhirom
 
 =head1 THANKS TO
 
