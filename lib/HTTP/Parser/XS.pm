@@ -183,6 +183,26 @@ The names of the headers are normalized to lower-cased.
 
 =back
 
+=head1 LIMITATIONS
+
+Both C<parse_http_request()> and C<parse_http_response()> in XS
+implementation have some size limitations.
+
+=head2 The number of headers
+
+The number of headers is limited to C<128>. If it exceeds, both parsing
+routines report parsing errors, i.e. return C<-1> for C<$ret>.
+
+=head2 The size of header names
+
+THe size of header names is limited to C<1024>.
+
+For C<parse_http_request()>, the limitation includes the length of C<HTTP_>.
+If the size exceeds, the parsing routine returns C<-1>.
+
+For C<parse_http_request()>, header names which exeed the limitation are
+simply ignored.
+
 =head1 COPYRIGHT
 
 Copyright 2009- Kazuho Oku
