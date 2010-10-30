@@ -13,7 +13,7 @@ my $crlf = "\015\012";
 
 note 'request parser';
 # on success
-my $name = 'x' x ($MAX_HEADER_LEN - length("HTTP_")); # OK
+my $name = 'x' x $MAX_HEADER_LEN; # OK
 my $request = "GET / HTTP/1.1" . $crlf
             . "$name: 42" . $crlf
             . $crlf;
@@ -25,7 +25,7 @@ is $env->{REQUEST_METHOD}, 'GET';
 is $env->{'HTTP_' . uc $name}, 42, 'very long name';
 
 # on fail
-$name = 'x' x (1 + $MAX_HEADER_LEN - length("HTTP_")); # OK
+$name = 'x' x ($MAX_HEADER_LEN + 1);
 $request = "GET / HTTP/1.1" . $crlf
           . "$name: 42" . $crlf
           . $crlf;

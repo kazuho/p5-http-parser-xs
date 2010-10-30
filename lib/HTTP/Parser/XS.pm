@@ -195,13 +195,12 @@ routines report parsing errors, i.e. return C<-1> for C<$ret>.
 
 =head2 The size of header names
 
-THe size of header names is limited to C<1024>.
+The size of header names is limited to C<1024>, but the parsers do not the
+same action.
 
-For C<parse_http_request()>, the limitation includes the length of C<HTTP_>.
-If the size exceeds, the parsing routine returns C<-1>.
+C<parse_http_request()> returns C<-1> if too-long header names exist.
 
-For C<parse_http_request()>, header names which exeed the limitation are
-simply ignored.
+C<parse_http_request()> simply ignores too-long header names.
 
 =head1 COPYRIGHT
 

@@ -165,7 +165,7 @@ CODE:
   int ret;
   HV* env;
   SV* last_value;
-  char tmp[MAX_HEADER_NAME_LEN];
+  char tmp[MAX_HEADER_NAME_LEN + sizeof("HTTP_") - 1];
   
   buf_str = SvPV(buf, buf_len);
   num_headers = MAX_HEADERS;
