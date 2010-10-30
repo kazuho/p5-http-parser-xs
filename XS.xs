@@ -9,7 +9,7 @@
 #include "picohttpparser/picohttpparser.c"
 
 #ifndef STATIC_INLINE /* a public perl API from 5.13.4 */
-#   if defined(__GNUC__) || defined(__cplusplus__) || (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L))
+#   if defined(__GNUC__) || defined(__cplusplus) || (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L))
 #       define STATIC_INLINE static inline
 #   else
 #       define STATIC_INLINE static
@@ -107,7 +107,7 @@ char* url_decode(const char* s, size_t len)
   return (char*)s;
   
  NEEDS_DECODE:
-  dbuf = malloc(len - 1);
+  dbuf = (char*)malloc(len - 1);
   assert(dbuf != NULL);
   memcpy(dbuf, s, i);
   d = dbuf + i;
