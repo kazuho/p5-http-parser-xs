@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.11
+	- fix build error due to the use of Module::Install::ReadmeMarkdownFromPod (RT #62589)
+
 0.10
 	- support for HTTP response parsing (by gfx,mala,tokuhirom)
 
