@@ -2,7 +2,6 @@ package HTTP::Parser::XS::PP;
 use strict;
 use warnings;
 use utf8;
-use URI::Escape ();
 
 sub HTTP::Parser::XS::parse_http_request {
     my($chunk, $env) = @_;
@@ -62,7 +61,7 @@ sub _parse_header {
     $env->{REQUEST_METHOD}  = $method;
     $env->{REQUEST_URI}     = $uri;
     $env->{SERVER_PROTOCOL} = "HTTP/1.$minor";
-    $env->{PATH_INFO}    = URI::Escape::uri_unescape($path);
+    ($env->{PATH_INFO}      = $path) =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
     $env->{QUERY_STRING} = $query || '';
     $env->{SCRIPT_NAME}  = '';
 
