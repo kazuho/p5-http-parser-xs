@@ -42,11 +42,11 @@ sub _parse_header {
 
     # parse request or response line
     my $obj;
-    my ($major, $minor);
+    my $minor;
 
     my ($method,$uri,$http) = split / /,$request;
-    return -1 unless $http and $http =~ /^HTTP\/(\d+)\.(\d+)$/i;
-    ($major, $minor) = ($1, $2);
+    return -1 unless $http and $http =~ /^HTTP\/1\.(\d+)$/;
+    $minor = $1;
 
     my($path, $query) = ( $uri =~ /^([^?]*)(?:\?(.*))?$/s );
     # following validations are just needed to pass t/01simple.t
@@ -61,7 +61,7 @@ sub _parse_header {
 
     $env->{REQUEST_METHOD}  = $method;
     $env->{REQUEST_URI}     = $uri;
-    $env->{SERVER_PROTOCOL} = "HTTP/$major.$minor";
+    $env->{SERVER_PROTOCOL} = "HTTP/1.$minor";
     $env->{PATH_INFO}    = URI::Escape::uri_unescape($path);
     $env->{QUERY_STRING} = $query || '';
     $env->{SCRIPT_NAME}  = '';
