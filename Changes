@@ -1,7 +1,10 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.13
+	- fix compile error on GCC < 3 (RT #63074)
+
 0.12
-	- fix undeclared dependency on URI::Escape (RC #62716 thanks to ANDK for reporting)
+	- fix undeclared dependency on URI::Escape (RT #62716)
 	- fix parsing of protocol version in the pure perl impl to exactly match that of XS
 
 0.11
@@ -11,7 +14,7 @@ Revision history for Perl extension HTTP::Parser::XS.
 	- support for HTTP response parsing (by gfx,mala,tokuhirom)
 
 0.09
-	- improve compatibility (mainly Windows, RT #61133, thanks to Taro Nishino)
+	- improve compatibility (mainly Windows, RT #61133)
 
 0.08
 	- improve compatibility (mainly Solaris, thanks to gfx)
@@ -21,10 +24,10 @@ Revision history for Perl extension HTTP::Parser::XS.
 
 0.06  Tue Feb 23 06:16:00 2010
 	- fix memory leak, add more checks (thanks to charsbar)
-	- prereq Test::More (see rt.cpan.org #54358)
+	- prereq Test::More (RT #54358)
 
 0.05  Fri Oct 23 21:12:00 2009
-	- no more (implicitly) depend on Exporter 5.63 (see http://rt.cpan.org/Public/Bug/Display.html?id=50607, thanks to ANDK for reporting)
+	- no more (implicitly) depend on Exporter 5.63 (RT #50607)
 
 0.04  Fri Oct 16 08:15:00 2009
 	- fix memory leak (thanks to nothingmuch for writing the patch)
