@@ -1,6 +1,8 @@
 #ifndef picohttpparser_h
 #define picohttpparser_h
 
+/* $Id: e8df3d19ac99b0e989e41f8281fd710fa94d17d4 $ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
