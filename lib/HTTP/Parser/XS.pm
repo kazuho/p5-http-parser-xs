@@ -74,7 +74,7 @@ HTTP::Parser::XS - a fast, primitive HTTP request parser
   my %special_headers = (
     'content-length' => undef,
   );
-  my($ret, $status, $message, $headers)
+  my($ret, $minor_version, $status, $message, $headers)
     = parse_http_response($response, HEADERS_AS_ARRAYREF, \%special_headers);
 
   if($ret == -1) }
