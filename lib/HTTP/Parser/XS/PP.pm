@@ -47,7 +47,7 @@ sub _parse_header {
     return -1 unless $http and $http =~ /^HTTP\/1\.(\d+)$/;
     $minor = $1;
 
-    my($path, $query) = ( $uri =~ /^([^?]*)(?:\?(.*))?$/s );
+    my($path, $query) = ( $uri =~ /^([^?#]*)(?:\?([^#]*))?/s );
     # following validations are just needed to pass t/01simple.t
     if ($path =~ /%(?:[0-9a-f][^0-9a-f]|[^0-9a-f][0-9a-f])/i) {
         # invalid char in url-encoded path
