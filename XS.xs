@@ -186,6 +186,7 @@ CODE:
   hv_store(env, "REQUEST_URI", sizeof("REQUEST_URI") - 1,
 	   newSVpvn(path, path_len), 0);
   hv_store(env, "SCRIPT_NAME", sizeof("SCRIPT_NAME") - 1, newSVpvn("", 0), 0);
+  path_len = find_ch(path, path_len, '#'); /* strip off all text after # after storing request_uri */
   question_at = find_ch(path, path_len, '?');
   if (store_url_decoded(env, "PATH_INFO", sizeof("PATH_INFO") - 1, path,
 			question_at)
