@@ -1,4 +1,4 @@
-use Test::More tests => 13;
+use Test::More tests => 19;
 
 use HTTP::Parser::XS qw(parse_http_request);
 
