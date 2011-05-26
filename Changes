@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.14
+	- do not include '#' and the following characters in URI in PATH_INFO or QUERY_STRING
+
 0.13
 	- fix compile error on GCC < 3 (RT #63074)
 
