@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.15
+	- deny HTTP header field with an empty name
+
 0.14
 	- do not include '#' and the following characters in URI in PATH_INFO or QUERY_STRING
 

@@ -19,7 +19,7 @@ use constant {
     HEADERS_AS_ARRAYREF =>2,    # Ordered ArrayRef : [ name, value, name2, value2 ... ]
 };
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 our $BACKEND;
 
