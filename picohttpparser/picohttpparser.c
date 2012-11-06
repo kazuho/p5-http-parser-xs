@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include "picohttpparser.h"
 
-/* $Id: 9cd312b6fcefb127a2edf2b2e60702d3f5b9abf7 $ */
+/* $Id: f88e09222873f8bd56c7836037b3fd0047024023 $ */
 
 #if __GNUC__ >= 3
 # define likely(x)	__builtin_expect(!!(x), 1)
@@ -38,6 +38,16 @@
     tok = tok_start;				       \
     toklen = buf - tok_start;			       \
   } while (0)
+
+static const char* token_char_map =
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\1\1\1\1\1\1\1\0\0\1\1\0\1\1\0\1\1\1\1\1\1\1\1\1\1\0\0\0\0\0\0"
+  "\0\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\0\0\0\1\1"
+  "\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\0\1\0\1\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
 static const char* get_token_to_eol(const char* buf, const char* buf_end,
 				    const char** token, size_t* token_len,
@@ -159,7 +169,11 @@ static const char* parse_headers(const char* buf, const char* buf_end,
       *ret = -1;
       return NULL;
     }
-    if (*num_headers == 0 || ! (*buf == ' ' || *buf == '\t')) {
+    if (! (*num_headers != 0 && (*buf == ' ' || *buf == '\t'))) {
+      if (! token_char_map[(unsigned char)*buf]) {
+	*ret = -1;
+	return NULL;
+      }
       /* parsing name, but do not discard SP before colon, see
        * http://www.mozilla.org/security/announce/2006/mfsa2006-33.html */
       headers[*num_headers].name = buf;
