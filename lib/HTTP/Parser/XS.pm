@@ -131,7 +131,7 @@ given request is incomplete
 
 =back
 
-Note that the semantics of PATH_INFO is somewhat different from Apache; the variable returned by HTTP::Parser::XS is conformant to RFC 3875 (and L<PSGI> / L<Plack>) in the fact that "//" and ".." appearing in PATH_INFO are preserved whereas Apache transcodes them.
+Note that the semantics of PATH_INFO is somewhat different from Apache.  First, L<HTTP::Parser::XS> does not validate the variable; it does not raise an error even if PATH_INFO does not start with "/".  Second, the variable is conformant to RFC 3875 (and L<PSGI> / L<Plack>) in the fact that "//" and ".." appearing in PATH_INFO are preserved whereas Apache transcodes them.
 
 =item parse_http_response($response_string, $header_format, \%special_headers)
 
