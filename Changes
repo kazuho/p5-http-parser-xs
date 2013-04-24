@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.16
+	- documentation about PATH_INFO
+
 0.15
 	- deny HTTP header field with an empty name
 
