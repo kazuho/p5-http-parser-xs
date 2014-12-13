@@ -1,5 +1,6 @@
 use inc::Module::Install;
 use Module::Install::TestTarget;
+use Module::Install::ReadmeFromPod;
 
 name 'HTTP-Parser-XS';
 all_from('lib/HTTP/Parser/XS.pm');
