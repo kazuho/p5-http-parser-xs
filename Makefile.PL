@@ -6,6 +6,7 @@ name 'HTTP-Parser-XS';
 all_from('lib/HTTP/Parser/XS.pm');
 readme_from('lib/HTTP/Parser/XS.pm');
 author 'Kazuho Oku';
+repository 'https://github.com/kazuho/p5-http-parser-xs';
 
 test_requires 'Test::More' => 0.96;
 
