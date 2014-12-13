@@ -243,6 +243,10 @@ L<nothingmuch|https://metacpan.org/author/NUFFIN>
 
 L<charsbar|https://metacpan.org/author/CHARSBAR>
 
+=item *
+
+L<DOLMEN|https://metacpan.org/author/DOLMEN>
+
 =back
 
 =head1 SEE ALSO
