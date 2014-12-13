@@ -209,17 +209,41 @@ C<parse_http_request()> simply ignores too-long header names.
 
 Copyright 2009- Kazuho Oku
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Kazuho Oku
-gfx
-mala
-tokuhirom
+=over 4
+
+=item *
+
+L<Kazuho Oku|https://metacpan.org/author/KAZUHO>
+
+=item *
+
+L<gfx|https://metacpan.org/author/GFUJI>
+
+=item *
+
+L<mala|https://metacpan.org/author/MALA>
+
+=item *
+
+L<tokuhirom|https://metacpan.org/author/TOKUHIROM>
+
+=back
 
 =head1 THANKS TO
 
-nothingmuch
-charsbar
+=over 4
+
+=item *
+
+L<nothingmuch|https://metacpan.org/author/NUFFIN>
+
+=item *
+
+L<charsbar|https://metacpan.org/author/CHARSBAR>
+
+=back
 
 =head1 SEE ALSO
 
