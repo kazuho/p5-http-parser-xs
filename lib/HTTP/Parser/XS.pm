@@ -223,15 +223,29 @@ charsbar
 
 =head1 SEE ALSO
 
+=over 4
+
+=item *
+
 L<http://github.com/kazuho/picohttpparser>
+
+=item *
 
 L<HTTP::Parser>
 
+=item *
+
 L<HTTP::HeaderParser::XS>
+
+=item *
 
 L<Plack>
 
+=item *
+
 L<PSGI>
+
+=back
 
 =head1 LICENSE
 
