@@ -73,6 +73,13 @@ FUNCTIONS
 
         -2      given request is incomplete
 
+        Note that the semantics of PATH_INFO is somewhat different from
+        Apache. First, HTTP::Parser::XS does not validate the variable; it
+        does not raise an error even if PATH_INFO does not start with "/".
+        Second, the variable is conformant to RFC 3875 (and PSGI / Plack) in
+        the fact that "//" and ".." appearing in PATH_INFO are preserved
+        whereas Apache transcodes them.
+
     parse_http_response($response_string, $header_format, \%special_headers)
         Tries to parse given response string. *$header_format* must be
         "HEADERS_AS_ARRAYREF", "HEADERS_AS_HASHREF", or "HEADERS_NONE",
@@ -133,16 +140,32 @@ LIMITATIONS
 COPYRIGHT
     Copyright 2009- Kazuho Oku
 
-AUTHOR
-    Kazuho Oku gfx mala tokuhirom
+AUTHORS
+    *   Kazuho Oku <https://metacpan.org/author/KAZUHO>
+
+    *   gfx <https://metacpan.org/author/GFUJI>
+
+    *   mala <https://metacpan.org/author/MALA>
+
+    *   tokuhirom <https://metacpan.org/author/TOKUHIROM>
 
 THANKS TO
-    nothingmuch charsbar
+    *   nothingmuch <https://metacpan.org/author/NUFFIN>
+
+    *   charsbar <https://metacpan.org/author/CHARSBAR>
+
+    *   DOLMEN <https://metacpan.org/author/DOLMEN>
 
 SEE ALSO
-    <http://github.com/kazuho/picohttpparser>
+    *   <http://github.com/kazuho/picohttpparser>
 
-    HTTP::Parser HTTP::HeaderParser::XS
+    *   HTTP::Parser
+
+    *   HTTP::HeaderParser::XS
+
+    *   Plack
+
+    *   PSGI
 
 LICENSE
     This library is free software; you can redistribute it and/or modify it

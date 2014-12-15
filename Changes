@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.17
+	- update picohttpparser (runs faster / does slightly more strict parsing)
+
 0.16
 	- documentation about PATH_INFO
 
