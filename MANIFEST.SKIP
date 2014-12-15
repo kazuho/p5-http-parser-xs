@@ -12,7 +12,8 @@
 \.shipit
 ^t/9\d_.*\.t
 \.svn/
-^\.git/
+.git*
+.travis.yml
 ^\.gitignore
 ^HTTP-Parser-XS-
 XS\.(o|c|bs)$
