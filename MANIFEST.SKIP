@@ -17,3 +17,4 @@
 ^\.gitignore
 ^HTTP-Parser-XS-
 XS\.(o|c|bs)$
+picohttpparser/picotest/
