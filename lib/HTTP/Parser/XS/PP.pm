@@ -195,7 +195,7 @@ sub _parse_as_hashref {
                   ? push( @$h, $value )
                   : ( $self{$f} = [ $h, $value ] );
             }
-            else { $self{$f} = $value }
+            else { $self{$f} = $value; exists $special->{$f} and $special->{$f} = $value; }
         }
         ( $field, $value ) = split /[ \t]*: ?/, $_, 2;
     }
@@ -207,7 +207,7 @@ sub _parse_as_hashref {
               ? push( @$h, $value )
               : ( $self{$f} = [ $h, $value ] );
         }
-        else { $self{$f} = $value }
+        else { $self{$f} = $value; exists $special->{$f} and $special->{$f} = $value; }
     }
     return \%self;
 }
