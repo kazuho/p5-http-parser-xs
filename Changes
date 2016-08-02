@@ -1,5 +1,8 @@
 Revision history for Perl extension HTTP::Parser::XS.
 
+0.17
+	- Set parsed values to special headers in PP's _parse_as_hashref #12 (makamaka)
+
 0.16
 	- documentation about PATH_INFO
 

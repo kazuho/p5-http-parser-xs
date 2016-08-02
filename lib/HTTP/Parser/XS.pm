@@ -19,7 +19,7 @@ use constant {
     HEADERS_AS_ARRAYREF =>2,    # Ordered ArrayRef : [ name, value, name2, value2 ... ]
 };
 
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 our $BACKEND;
 
@@ -228,6 +228,10 @@ L<mala|https://metacpan.org/author/MALA>
 =item *
 
 L<tokuhirom|https://metacpan.org/author/TOKUHIROM>
+
+=item *
+
+L<makamaka|https://metacpan.org/author/MAKAMAKA>
 
 =back
 
