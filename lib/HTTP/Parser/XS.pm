@@ -143,7 +143,7 @@ The optional I<%special_headers> is for headers you specifically require.
 You can set any HTTP response header names, which must be lower-cased,
 and their default values, and then the values are filled in by
 C<parse_http_response()>.
-For example, if you want the C<Cointent-Length> field, set its name with
+For example, if you want the C<Content-Length> field, set its name with
 default values like C<< %h = ('content-length' => undef) >> and pass it as
 I<%special_headers>. After parsing, C<$h{'content-length'}> is set
 if the response has the C<Content-Length> field, otherwise it's not touched.
@@ -154,11 +154,11 @@ The return values are:
 
 =item C<$ret>
 
-The parsering status, which is the same as C<parse_http_response()>. i.e.
+The parsing status, which is the same as C<parse_http_response()>. i.e.
 the length of the response headers in bytes, C<-1> for incomplete headers,
 or C<-2> for errors.
 
-If the given response string is broken or imcomplete, C<parse_http_response()>
+If the given response string is broken or incomplete, C<parse_http_response()>
 returns only this value.
 
 =item C<$minor_version>
