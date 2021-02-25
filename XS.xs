@@ -167,7 +167,7 @@ CODE:
   SV* last_value;
   char tmp[MAX_HEADER_NAME_LEN + sizeof("HTTP_") - 1];
   
-  buf_str = SvPV(buf, buf_len);
+  buf_str = SvPVbyte(buf, buf_len);
   num_headers = MAX_HEADERS;
   ret = phr_parse_request(buf_str, buf_len, &method, &method_len, &path,
 			  &path_len, &minor_version, headers, &num_headers, 0);
@@ -263,7 +263,7 @@ PPCODE:
   struct phr_header headers[MAX_HEADERS];
   size_t num_headers = MAX_HEADERS;
   STRLEN buf_len;
-  const char* const buf_str = SvPV_const(buf, buf_len);
+  const char* const buf_str = SvPVbyte(buf, buf_len);
   size_t last_len = 0;
   int const ret             = phr_parse_response(buf_str, buf_len,
     &minor_version, &status, &msg, &msg_len, headers, &num_headers, last_len);
