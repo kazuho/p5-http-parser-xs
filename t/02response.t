@@ -106,6 +106,17 @@ FOO-BAR: BAZ
  '_rc' => 200,
  '_msg' => 'OK'
 }
+----------
+HTTP/1.1 200
+
+----------
+{
+ '_content' => "",
+ '_protocol' => 'HTTP/1.1',
+ '_headers' => {},
+ '_rc' => 200,
+ '_msg' => ''
+}
 __HEADERS
 
 my @tests = split '-'x10, $tests;
@@ -129,7 +140,7 @@ sub parse_it {
     if ($ret > 0) {
         return +{
             _rc => $status,
-            _msg => $msg,
+            _msg => $msg || '',
             _headers => $headers,
             _protocol => "HTTP/1.$minor_version",
             _content => substr($buf, $ret),
