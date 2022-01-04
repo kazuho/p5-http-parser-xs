@@ -6,7 +6,7 @@ use HTTP::Parser::XS qw/:all/;
 use Data::Dumper;
 
 my $tests = <<'__HEADERS';
-HOGE
+HOGE/1.1 200 OK
 
 ----------
 -1
