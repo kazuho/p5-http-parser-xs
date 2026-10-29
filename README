@@ -88,21 +88,21 @@ FUNCTIONS
         The optional *%special_headers* is for headers you specifically
         require. You can set any HTTP response header names, which must be
         lower-cased, and their default values, and then the values are
-        filled in by "parse_http_response()". For example, if you want the
-        "Cointent-Length" field, set its name with default values like "%h =
+        filled in by parse_http_response(). For example, if you want the
+        "Content-Length" field, set its name with default values like "%h =
         ('content-length' => undef)" and pass it as *%special_headers*.
         After parsing, $h{'content-length'} is set if the response has the
         "Content-Length" field, otherwise it's not touched.
 
         The return values are:
 
-        $ret    The parsering status, which is the same as
-                "parse_http_response()". i.e. the length of the response
+        $ret    The parsing status, which is the same as
+                parse_http_response(). i.e. the length of the response
                 headers in bytes, -1 for incomplete headers, or -2 for
                 errors.
 
-                If the given response string is broken or imcomplete,
-                "parse_http_response()" returns only this value.
+                If the given response string is broken or incomplete,
+                parse_http_response() returns only this value.
 
         $minor_version
                 The minor version of the given response. i.e. 1 for
@@ -122,8 +122,8 @@ FUNCTIONS
                 The names of the headers are normalized to lower-cased.
 
 LIMITATIONS
-    Both "parse_http_request()" and "parse_http_response()" in XS
-    implementation have some size limitations.
+    Both parse_http_request() and parse_http_response() in XS implementation
+    have some size limitations.
 
   The number of headers
     The number of headers is limited to 128. If it exceeds, both parsing
@@ -133,9 +133,9 @@ LIMITATIONS
     The size of header names is limited to 1024, but the parsers do not the
     same action.
 
-    "parse_http_request()" returns -1 if too-long header names exist.
+    parse_http_request() returns -1 if too-long header names exist.
 
-    "parse_http_request()" simply ignores too-long header names.
+    parse_http_request() simply ignores too-long header names.
 
 COPYRIGHT
     Copyright 2009- Kazuho Oku
