@@ -95,7 +95,7 @@ int hex_decode(const char ch)
 }
 
 static
-char* url_decode(const char* s, size_t len)
+char* url_decode(const char* s, size_t len, size_t* decoded_len)
 {
   dTHX;
   char* dbuf, * d;
@@ -104,6 +104,7 @@ char* url_decode(const char* s, size_t len)
   for (i = 0; i < len; ++i)
     if (s[i] == '%')
       goto NEEDS_DECODE;
+  *decoded_len = len;
   return (char*)s;
   
  NEEDS_DECODE:
@@ -125,6 +126,7 @@ char* url_decode(const char* s, size_t len)
       *d++ = s[i++];
   }
   *d = '\0';
+  *decoded_len = d - dbuf;
   return dbuf;
 }
 
@@ -133,14 +135,15 @@ int store_url_decoded(HV* env, const char* name, size_t name_len,
 			       const char* value, size_t value_len)
 {
   dTHX;
-  char* decoded = url_decode(value, value_len);
+  size_t decoded_len;
+  char* decoded = url_decode(value, value_len, &decoded_len);
   if (decoded == NULL)
     return -1;
   
   if (decoded == value)
     hv_store(env, name, name_len, newSVpvn(value, value_len), 0);
   else {
-    hv_store(env, name, name_len, newSVpv(decoded, 0), 0);
+    hv_store(env, name, name_len, newSVpvn(decoded, decoded_len), 0);
     free(decoded);
   }
   return 0;
